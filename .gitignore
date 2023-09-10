@@ -128,3 +128,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+# chave
+api_key_tempo.txt
+
+# variaveis de ambiente
+.env
+.env.production
