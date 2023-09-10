@@ -1,7 +1,7 @@
 import React from "react";
 import ListaTipoOperacao from "../../components/tipoOperacao/ListaTipoOperacao";
 import TituloPagina from "../../components/TituloPagina";
-const Registro = () => {  
+const TipoOperacao = () => {  
     return (
         <div>
             <TituloPagina titulo = "Lista de Operações"/>        
@@ -10,4 +10,4 @@ const Registro = () => {
     );
 };
 
-export default Registro;
+export default TipoOperacao;

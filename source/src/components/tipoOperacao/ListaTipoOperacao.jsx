@@ -11,7 +11,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { Component } from 'react';
+import { Component} from 'react';
+
+import EditIcon from '@mui/icons-material/Edit';
+import DialogExcluirTipoOperacao from '../../components/tipoOperacao/DialogExcluirTipoOperacao';
 
 export default class ListaTipoOperacao extends Component {
     constructor(props) {
@@ -21,12 +24,11 @@ export default class ListaTipoOperacao extends Component {
         };
     }
     componentDidMount() {
-
         fetch(`${import.meta.env.VITE_URL_API_OPERACAO}/tipo_operacoes`)
             .then(response => response.json())
             .then(responseData => this.setState(responseData))
             .catch(error => console.error(error));
-    }
+    }            
     render() {
         if (this.state.loading) {
             return <p>Carregando...</p>;
@@ -84,17 +86,20 @@ export default class ListaTipoOperacao extends Component {
                                             {row.descricao}
                                         </StyledTableCell>
                                         <StyledTableCell align="center" >
-
-
-                                            <Button variant="contained" color="primary" size="small">
-                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/TipoOperacaoEditar/${row.codigo}`}>Editar</Link>
-                                            </Button>
-
-                                            <Button variant="contained" color="error" size="small">
-                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/TipoOperacaoEditar/${row.codigo}`}>Excluir</Link>
-                                            </Button>
-                                             
-
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
+                                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/TipoOperacaoEditar/${row.codigo}`}>Editar</Link>
+                                                            </Button>
+                                                        </td>
+                                                        <td>
+                                                            <DialogExcluirTipoOperacao tipoOperacaoParam = {row}  />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </StyledTableCell>
                                     </StyledTableRow>
                                 )

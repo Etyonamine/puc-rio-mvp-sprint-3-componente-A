@@ -11,6 +11,7 @@ import Registro from "./routes/Registro";
 import Veiculo from "./routes/Veiculo";
 import TipoOperacao from './routes/tipoOperacao/TipoOperacao';
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
+import ListaTipoOperacao from "./components/tipoOperacao/ListaTipoOperacao";
 
 import ErrorPage from "./routes/ErrorPage";
 
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
         {
           path: "TipoOperacao",
           element: <TipoOperacao /> 
+        },
+        {
+          path: "ListaTipoOperacao",
+          element: <ListaTipoOperacao /> 
         },
         {
           path: "TipoOperacaoEditar/:id",

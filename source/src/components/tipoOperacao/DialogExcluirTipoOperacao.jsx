@@ -5,17 +5,17 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import SaveIcon from '@mui/icons-material/Save';
+
+import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
-
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },) {
+export default function DialogExcluirTipoOperacao({ tipoOperacaoParam },) {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [mostrar_mensagem_sucesso, setMensagemComSucesso] = React.useState(false);
@@ -23,7 +23,8 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
 
   const [tipoOperacao, setTipoOperacao] = React.useState({});
   
-
+  
+  
   const handleClickOpen = () => {
     setTipoOperacao(tipoOperacaoParam);
     setOpen(true);
@@ -56,22 +57,19 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
   }
   const handleMensagemComSucesso = () => {
     setMensagemComSucesso(true);
-    setTimeout(() => {
-      handleClose();
+    setTimeout(() => {      
       redirect();
     }, 5000);
 
   };
 
   const redirect = () => {
-    navigate('/TipoOperacao');
+    navigate('/ListaTipoOperacao');
   };
 
-  const salvarRegistro = (() => {
+  const excluirRegistro = (() => {
     const data = new FormData();
-    data.append("codigo", tipoOperacao.codigo);
-    data.append("sigla", tipoOperacao.sigla);
-    data.append("descricao", tipoOperacao.descricao);
+    data.append("codigo", tipoOperacao.codigo);    
     let url = `${import.meta.env.VITE_URL_API_OPERACAO}/tipo_operacao`;
      
 
@@ -79,7 +77,7 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
 
       fetch(url,
         {
-          method: 'PUT',
+          method: 'DELETE',
           body: data
         })
         .then((response) => {          
@@ -96,8 +94,8 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
 
   return (
     <>
-      <Button variant="contained" endIcon={<SaveIcon />} color='success' onClick={handleClickOpen}>
-        Salvar
+      <Button variant="contained" size="small" endIcon={<DeleteIcon />} color='error' onClick={handleClickOpen}>
+        Excluir
       </Button>
       <Dialog
         open={open}
@@ -108,7 +106,7 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
       >
         <DialogTitle id="alert-dialog-title"
           sx={{
-            bgcolor: '#1976d2',
+            bgcolor: 'red',
             color: 'white',
             /* boxShadow: 1,
             borderRadius: 2, */
@@ -120,7 +118,7 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
 
           }}
         >
-          Tipo de Operação - Edição - Salvar
+          Tipo de Operação - Excluir
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description"
@@ -131,11 +129,11 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
               textAlign: 'left'
             }}
           >
-            Tem certeza que deseja salvar a Siga <b> [ {tipoOperacao.sigla} ]</b>  com a descrição <b> [ {tipoOperacao.descricao} ] </b> ?
+            Tem certeza que deseja excluir a Siga <b> [ {tipoOperacao.sigla} ]</b>  com a descrição <b> [ {tipoOperacao.descricao} ] </b>?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button id="contained" onClick={salvarRegistro}>SIM</Button>
+          <Button id="contained" onClick={excluirRegistro}>SIM</Button>
           <Button id="contained" onClick={handleClose} autoFocus>NÃO</Button>
         </DialogActions>
       </Dialog>
@@ -145,7 +143,7 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
           horizontal: "center"
         }}
       >
-        <Alert onClose={handleCloseMensagemSucesso} severity="success" sx={{ width: '100%' }}>Registro salvo com sucesso!</Alert>
+        <Alert onClose={handleCloseMensagemSucesso} severity="success" sx={{ width: '100%' }}>Registro excluido com sucesso!</Alert>
       </Snackbar>
       <Snackbar open={mostrar_mensagem_com_erro} autoHideDuration={3000} onClose={handleCloseMensagemComErro}
         anchorOrigin={{
