@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,7 +13,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { Component} from 'react';
+import { Component } from 'react';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DialogExcluirTipoOperacao from '../../components/tipoOperacao/DialogExcluirTipoOperacao';
@@ -28,8 +30,9 @@ export default class ListaTipoOperacao extends Component {
             .then(response => response.json())
             .then(responseData => this.setState(responseData))
             .catch(error => console.error(error));
-    }            
+    }
     render() {
+
         if (this.state.loading) {
             return <p>Carregando...</p>;
         }
@@ -56,58 +59,80 @@ export default class ListaTipoOperacao extends Component {
             }));
 
             return (
+                <div>
+                    <Box
+                        component="div"
+                        sx={{
+                            height:40,                            
+                            width: '100%',
+                            marginTop: 1,
+                            marginBottom:1
+                        }}
+                    >
+                        <Stack direction="row">
+                            <Button variant="contained" color="primary">
+                                <Link style={{ textDecoration: "none", color: "white" }} to={`/TipoOperacaoNovo`}>Novo registro</Link>
+                            </Button>
+                        </Stack>
+                        
+                    </Box>
+                    <Box
+                     component="div"
+                    >
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="lista">
+                                <TableHead sx={{ height: 40 }}>
+                                    <TableRow>
+                                        <StyledTableCell align="center">Código</StyledTableCell>
+                                        <StyledTableCell align="center">Sigla</StyledTableCell>
+                                        <StyledTableCell align="center">Descrição</StyledTableCell>
+                                        <StyledTableCell align="center">Ação</StyledTableCell>
+                                    </TableRow>
+                                </TableHead>
 
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="lista">
-                        <TableHead sx={{ height: 40 }}>
-                            <TableRow>
-                                <StyledTableCell align="center">Código</StyledTableCell>
-                                <StyledTableCell align="center">Sigla</StyledTableCell>
-                                <StyledTableCell align="center">Descrição</StyledTableCell>
-                                <StyledTableCell align="center">Ação</StyledTableCell>
-                            </TableRow>
-                        </TableHead>
+                                <TableBody >
 
-                        <TableBody >
+                                    {this.state
+                                        .lista.map((row) => (
+                                            <StyledTableRow
+                                                key={row.codigo}
+                                                sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: 40 }}
+                                            >
+                                                <StyledTableCell align='center' component="th" scope="row" divider={<Divider orientation="vertical" flexItem />}>
+                                                    {row.codigo}
+                                                </StyledTableCell>
+                                                <StyledTableCell align='center'>
+                                                    {row.sigla}
+                                                </StyledTableCell>
+                                                <StyledTableCell align='center'>
+                                                    {row.descricao}
+                                                </StyledTableCell>
+                                                <StyledTableCell align="center" >
+                                                    <table>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>
+                                                                    <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
+                                                                        <Link style={{ textDecoration: "none", color: "white" }} to={`/TipoOperacaoEditar/${row.codigo}`}>Editar</Link>
+                                                                    </Button>
+                                                                </td>
+                                                                <td>
+                                                                    <DialogExcluirTipoOperacao tipoOperacaoParam={row} />
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </StyledTableCell>
+                                            </StyledTableRow>
+                                        )
+                                        )
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
 
-                            {this.state
-                                .lista.map((row) => (
-                                    <StyledTableRow
-                                        key={row.codigo}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: 40 }}
-                                    >
-                                        <StyledTableCell align='center' component="th" scope="row" divider={<Divider orientation="vertical" flexItem />}>
-                                            {row.codigo}
-                                        </StyledTableCell>
-                                        <StyledTableCell align='center'>
-                                            {row.sigla}
-                                        </StyledTableCell>
-                                        <StyledTableCell align='center'>
-                                            {row.descricao}
-                                        </StyledTableCell>
-                                        <StyledTableCell align="center" >
-                                            <table>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
-                                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/TipoOperacaoEditar/${row.codigo}`}>Editar</Link>
-                                                            </Button>
-                                                        </td>
-                                                        <td>
-                                                            <DialogExcluirTipoOperacao tipoOperacaoParam = {row}  />
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </StyledTableCell>
-                                    </StyledTableRow>
-                                )
-                                )
-                            }
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                </div>
             )
         }
     }

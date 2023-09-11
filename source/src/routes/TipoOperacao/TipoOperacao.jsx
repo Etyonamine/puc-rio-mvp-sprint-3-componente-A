@@ -4,7 +4,7 @@ import TituloPagina from "../../components/TituloPagina";
 const TipoOperacao = () => {  
     return (
         <div>
-            <TituloPagina titulo = "Lista de Operações"/>        
+            <TituloPagina titulo = "Lista de Tipos de Operação"/>        
             <ListaTipoOperacao />
         </div>
     );

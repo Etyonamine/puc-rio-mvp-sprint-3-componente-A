@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from './components/Navbar';
 import TempoApp from '../src/components/externo/Tempo';
 import TituloPrincipal from './components/TituloPrincipal';
+import DateCalendarValue from './components/Shared/Calendario';
 
 import Grid from '@mui/material/Grid';
 
@@ -14,10 +15,11 @@ function App() {
             <TituloPrincipal />
             <Navbar />
           </Grid>
-          <Grid item xs={2}> 
+          <Grid item xs={3}> 
             <TempoApp />
+            <DateCalendarValue />
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={9}>
             <Outlet />
           </Grid>
         </Grid>

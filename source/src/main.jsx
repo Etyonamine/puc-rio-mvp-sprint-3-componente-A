@@ -6,10 +6,12 @@ import './App.css';
 //1-configurando router
 import {  createBrowserRouter, RouterProvider, Navigate} from "react-router-dom";
 
+
 import Home from "./routes/Home";
 import Registro from "./routes/Registro";
 import Veiculo from "./routes/Veiculo";
 import TipoOperacao from './routes/tipoOperacao/TipoOperacao';
+import TipoOperacaoNovoRegistro from './routes/tipoOperacao/TipoOperacaoNovoRegistro';
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
 import ListaTipoOperacao from "./components/tipoOperacao/ListaTipoOperacao";
 
@@ -37,6 +39,10 @@ const router = createBrowserRouter([
         {
           path: "TipoOperacao",
           element: <TipoOperacao /> 
+        },
+        {
+          path: "TipoOperacaoNovo",
+          element: <TipoOperacaoNovoRegistro />
         },
         {
           path: "ListaTipoOperacao",
