@@ -17,7 +17,8 @@ const TipoOperacaoFormNovo = () => {
     const [descricao, setDescricao] = useState('');
     const [mostrar_mensagem_sucesso, setMensagemComSucesso] = React.useState(false);
     const [mostrar_mensagem_com_erro, setMensagemComErro] = useState(false);
-    const [nomeCampo, setNomeCampo] = useState('');
+
+    const [mensagemErroTexto, setMensagemErroTexto] = React.useState('');
 
     const navigate = useNavigate();
 
@@ -27,7 +28,7 @@ const TipoOperacaoFormNovo = () => {
 
     const handleMensagemComSucesso = () => {
         setMensagemComSucesso(true);
-        setTimeout(() => {            
+        setTimeout(() => {
             redirect();
         }, 5000);
     };
@@ -55,27 +56,42 @@ const TipoOperacaoFormNovo = () => {
 
                     if (response.status === 200) {
                         handleMensagemComSucesso();
-                    } else {
-                        handleMensagemComErro(error);
+                    }
+
+                    else if (response.status === 409) {
+                        setMensagemComErro(true);   
+                        setMensagemErroTexto('A Sigla já existe!');
+                    }
+                    else {
+                        setMensagemComErro(true);                           
+                        setMensagemErroTexto('Ocorreu um erro na tentativa de salvar!');
+                        
                     }
                 })
-        } catch (error) {
-            handleMensagemComErro(error);
         }
-
-    };
+        catch (error) {
+            setMensagemComErro(true);   
+            setMensagemErroTexto(`Ocorreu um erro na tentativa de salvar!`);
+            console.log(error);
+            
+        }
+    }
 
     const ValidarCampos = () => {
         if (sigla.trim().length == 0) {
 
-            setNomeCampo('Sigla');
             setMensagemComErro(true);
+
+            setMensagemErroTexto(`O campo [ Sigla ] está vazio ou inválido!`);
+
             return false;
         }
         if (descricao.trim().length == 0) {
 
-            setNomeCampo('Descrição');
             setMensagemComErro(true);
+
+            setMensagemErroTexto(`O campo [ Descrição ]] está vazio ou inválido!`);
+
             return false;
         }
         return true;
@@ -94,8 +110,9 @@ const TipoOperacaoFormNovo = () => {
         if (reason === 'clickaway') {
             return;
         }
-        setMensagemComErro(false);
-        setNomeCampo('');
+        setMensagemComErro(false);         
+        setMensagemErroTexto('');
+
     };
 
     return (
@@ -148,7 +165,7 @@ const TipoOperacaoFormNovo = () => {
                     horizontal: "center"
                 }}
             >
-                <Alert onClose={handleCloseMensagemComErro} severity="error" sx={{ width: '100%' }}>Atenção!O Campo <b>[ {nomeCampo} ]</b> está vazio ou a informação é inválida!</Alert>
+                <Alert onClose={handleCloseMensagemComErro} severity="error" sx={{ width: '100%' }}>Ocorreu o erro: <b> {mensagemErroTexto} </b></Alert>
             </Snackbar>
 
 

@@ -20,6 +20,7 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
   const [open, setOpen] = React.useState(false);
   const [mostrar_mensagem_sucesso, setMensagemComSucesso] = React.useState(false);
   const [mostrar_mensagem_com_erro, setMensagemComErro] = React.useState(false);
+  const [mensagemErroTexto, setMensagemErroTexto]= React.useState('');
 
   const [tipoOperacao, setTipoOperacao] = React.useState({});
   
@@ -50,10 +51,13 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
     setMensagemComErro(false);
 
   };
+
   const handleMensagemComErro = (erro) => {
     setMensagemComErro(true);
+    setMensagemErroTexto(erro);
     console.log(erro);
   }
+  
   const handleMensagemComSucesso = () => {
     setMensagemComSucesso(true);
     setTimeout(() => {
@@ -84,12 +88,22 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
         })
         .then((response) => {          
           if (response.status === 204) {             
-            handleMensagemComSucesso();
-          }else{
-            handleMensagemComErro(error);      
+            handleMensagemComSucesso();            
+          }
+          else if (response.status===404){
+            handleMensagemComErro('O registro não foi encontrado para e edição!');      
+          }
+          else if (response.status === 400){
+            handleMensagemComErro('A Sigla já existe!');      
+          }
+          else
+          {
+            handleMensagemComErro('');      
+            console.log(response);
           }
         })
     } catch (error) {
+      console.log(error);
       handleMensagemComErro(error);
     }
   });
@@ -153,7 +167,7 @@ export default function DialogSalvarAlteracaoTipoOperacao({ tipoOperacaoParam },
           horizontal: "center"
         }}
       >
-        <Alert onClose={handleCloseMensagemComErro} severity="error" sx={{ width: '100%' }}>Ocorreu um erro ao salvar o registro!</Alert>
+        <Alert onClose={handleCloseMensagemComErro} severity="error" sx={{ width: '100%' }}>Ocorreu o erro: <b> {mensagemErroTexto} </b></Alert>
       </Snackbar>
     </>
   );
