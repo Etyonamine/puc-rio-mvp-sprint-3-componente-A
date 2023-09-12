@@ -1,22 +1,37 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import TituloPagina from '../../components/TituloPagina';
 import BotaoVoltar from '../../components/Botoes/BotaoRetornar';
-import MarcaSalvarNovoRegistro from '../../components/marcas/MarcaSalvarNovoRegistro';
+import MarcaSalvarEdicaoRegistro from '../../components/marcas/MarcaSalvarEdicaoRegistro';
 import {
     Box,
     TextField
 } from '@mui/material';
+import { useEffect } from 'react';
 
-const MarcaNovoRegistro = () => {
+const MarcaEditarRegistro = (props) => {
     const [nome, setNome] = useState('');
-    
+    const { id } = useParams();
+
+    useEffect(() => {
+        let url = `${import.meta.env.VITE_URL_API_VEICULO}/marca_id?codigo=${id}`;
+
+
+        fetch(url)
+            .then(response => response.json())
+            .then(responseData => {                
+                setNome(responseData.nome);                
+            })
+            .catch(error => console.error(error));
+    }, []);
+
     return (
 
         <div>
             <Box
                 componet="div"
             >
-                <TituloPagina titulo="Cadastro de Marca - Novo registro" />
+                <TituloPagina titulo="Cadastro de Marca - Editar registro" />
             </Box>
 
             <Box
@@ -37,9 +52,9 @@ const MarcaNovoRegistro = () => {
                 />
 
             </Box>
-            <MarcaSalvarNovoRegistro nome={nome}/>
+            <MarcaSalvarEdicaoRegistro nome={nome} codigo={id} />
             <BotaoVoltar />
         </div>
     )
 }
-export default MarcaNovoRegistro;
+export default MarcaEditarRegistro;

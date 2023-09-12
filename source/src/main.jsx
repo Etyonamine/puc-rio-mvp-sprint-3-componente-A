@@ -12,6 +12,7 @@ import Registro from "./Pages/Operacao/Registro";
 import Veiculo from "./Pages/Veiculo/Veiculo";
 import Marca from './Pages/Marca/Marca';
 import MarcaNovoRegistro from './Pages/Marca/MarcaNovoRegistro';
+import MarcaEditarRegistro from './Pages/Marca/MarcaEditarRegistro';
 import TipoOperacao from './Pages/tipoOperacao/TipoOperacao';
 import TipoOperacaoNovoRegistro from './Pages/tipoOperacao/TipoOperacaoNovoRegistro';
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
         {
           path: "MarcaNovoRegistro",
           element: <MarcaNovoRegistro />
+        },        
+        {
+          path: "MarcaEditarRegistro/:id",
+          element: <MarcaEditarRegistro />
         },        
         {
           path: "Modelo",

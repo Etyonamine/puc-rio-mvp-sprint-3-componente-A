@@ -13,7 +13,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-
+import EditIcon from '@mui/icons-material/Edit';
 
 export default class ListaMarcas extends Component {
     constructor(props) {
@@ -23,7 +23,7 @@ export default class ListaMarcas extends Component {
         };
     }
 
-    componentDidMount() {             
+    componentDidMount() {
         fetch(`${import.meta.env.VITE_URL_API_VEICULO}/marcas`)
             .then(response => response.json())
             .then(responseData => this.setState(responseData))
@@ -104,7 +104,9 @@ export default class ListaMarcas extends Component {
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    
+                                                                    <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
+                                                                        <Link style={{ textDecoration: "none", color: "white" }} to={`/MarcaEditarRegistro/${row.codigo}`}>Editar</Link>
+                                                                    </Button>
                                                                 </td>
                                                                 <td>
                                                                     {/* <DialogExcluirTipoOperacao tipoOperacaoParam={row} /> */}
