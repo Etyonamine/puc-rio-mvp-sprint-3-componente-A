@@ -8,7 +8,7 @@ import BotaoVoltar from '../Botoes/BotaoRetornar';
 import DialogSalvarAlteracao from './DialogSalvarAlteracaoTipoOperacao';
 
 const TipoOperacaoFormEditar = () => {
-    let { id } = useParams();
+    const { id } = useParams();
     const [codigo, setCodigo] = useState('');
     const [sigla, setSigla] = useState('');
     const [descricao, setDescricao] = useState('');

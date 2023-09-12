@@ -7,15 +7,18 @@ import './App.css';
 import {  createBrowserRouter, RouterProvider, Navigate} from "react-router-dom";
 
 
-import Home from "./routes/Home";
-import Registro from "./routes/Registro";
-import Veiculo from "./routes/Veiculo";
-import TipoOperacao from './routes/tipoOperacao/TipoOperacao';
-import TipoOperacaoNovoRegistro from './routes/tipoOperacao/TipoOperacaoNovoRegistro';
+import Home from "./Pages/Home";
+import Registro from "./Pages/Registro";
+import Veiculo from "./Pages/Veiculo";
+import Marca from './Pages/Marca/Marca';
+import MarcaNovoRegistro from './components/marcas/MarcaSalvarNovoRegistro';
+import TipoOperacao from './Pages/tipoOperacao/TipoOperacao';
+import TipoOperacaoNovoRegistro from './Pages/tipoOperacao/TipoOperacaoNovoRegistro';
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
 import ListaTipoOperacao from "./components/tipoOperacao/ListaTipoOperacao";
 
-import ErrorPage from "./routes/ErrorPage";
+
+import ErrorPage from "./Pages/ErrorPage";
 
 const router = createBrowserRouter([
   {
@@ -54,8 +57,16 @@ const router = createBrowserRouter([
         },    
         {
           path: "Marca",
-          element: <Veiculo /> 
+          element: <Marca /> 
         },
+        {
+          path: "MarcaNovoRegistro",
+          element: <MarcaNovoRegistro />
+        },        
+       /*  {
+          path: "MarcaFormulario",
+          element: <MarcaFormulario /> 
+        }, */
         {
           path: "Modelo",
           element: <Veiculo /> 

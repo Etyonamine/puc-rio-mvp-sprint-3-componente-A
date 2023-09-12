@@ -15,13 +15,14 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function DialogExcluirTipoOperacao({ tipoOperacaoParam },) {
+export default function DialogExcluirMarca({ tipoOperacaoParam },) {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [mostrar_mensagem_sucesso, setMensagemComSucesso] = React.useState(false);
   const [mostrar_mensagem_com_erro, setMensagemComErro] = React.useState(false);
 
   const [tipoOperacao, setTipoOperacao] = React.useState({});
+  
   
   
   const handleClickOpen = () => {
@@ -50,12 +51,10 @@ export default function DialogExcluirTipoOperacao({ tipoOperacaoParam },) {
     setMensagemComErro(false);
 
   };
-
   const handleMensagemComErro = (erro) => {
     setMensagemComErro(true);
     console.log(erro);
   }
-  
   const handleMensagemComSucesso = () => {
     setMensagemComSucesso(true);
     setTimeout(() => {      

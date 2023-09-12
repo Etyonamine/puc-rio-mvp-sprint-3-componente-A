@@ -15,10 +15,10 @@ const TipoOperacaoFormNovo = () => {
 
     const [sigla, setSigla] = useState('');
     const [descricao, setDescricao] = useState('');
-    const [mostrar_mensagem_sucesso, setMensagemComSucesso] = React.useState(false);
+    const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
     const [mostrar_mensagem_com_erro, setMensagemComErro] = useState(false);
 
-    const [mensagemErroTexto, setMensagemErroTexto] = React.useState('');
+    const [mensagemErroTexto, setMensagemErroTexto] = useState('');
 
     const navigate = useNavigate();
 
