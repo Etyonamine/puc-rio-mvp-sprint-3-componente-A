@@ -8,10 +8,10 @@ import {  createBrowserRouter, RouterProvider, Navigate} from "react-router-dom"
 
 
 import Home from "./Pages/Home";
-import Registro from "./Pages/Registro";
-import Veiculo from "./Pages/Veiculo";
+import Registro from "./Pages/Operacao/Registro";
+import Veiculo from "./Pages/Veiculo/Veiculo";
 import Marca from './Pages/Marca/Marca';
-import MarcaNovoRegistro from './components/marcas/MarcaSalvarNovoRegistro';
+import MarcaNovoRegistro from './Pages/Marca/MarcaNovoRegistro';
 import TipoOperacao from './Pages/tipoOperacao/TipoOperacao';
 import TipoOperacaoNovoRegistro from './Pages/tipoOperacao/TipoOperacaoNovoRegistro';
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
@@ -63,10 +63,6 @@ const router = createBrowserRouter([
           path: "MarcaNovoRegistro",
           element: <MarcaNovoRegistro />
         },        
-       /*  {
-          path: "MarcaFormulario",
-          element: <MarcaFormulario /> 
-        }, */
         {
           path: "Modelo",
           element: <Veiculo /> 

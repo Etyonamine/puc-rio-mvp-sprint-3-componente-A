@@ -1,5 +1,5 @@
 import React from "react";
-import ListaMarcas from "../components/marcas/ListaMarcas";
+import ListaMarcas from "../../components/marcas/ListaMarcas";
 
 const Veiculo = () => {
     return (

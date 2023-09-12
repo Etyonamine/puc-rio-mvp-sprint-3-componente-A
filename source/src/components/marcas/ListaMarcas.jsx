@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import API_Veiculo from '../../services/API_Veiculo';
 import { Link } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -14,8 +13,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import EditIcon from '@mui/icons-material/Edit';
-import DialogExcluirTipoOperacao from '../../components/tipoOperacao/DialogExcluirTipoOperacao';
 
 
 export default class ListaMarcas extends Component {
@@ -107,9 +104,7 @@ export default class ListaMarcas extends Component {
                                                         <tbody>
                                                             <tr>
                                                                 <td>
-                                                                    {/* <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
-                                                                            <Link style={{ textDecoration: "none", color: "white" }} to={`/MarcaSalvarNovoRegistro/${row.codigo}`}>Editar</Link>
-                                                                        </Button> */}
+                                                                    
                                                                 </td>
                                                                 <td>
                                                                     {/* <DialogExcluirTipoOperacao tipoOperacaoParam={row} /> */}
