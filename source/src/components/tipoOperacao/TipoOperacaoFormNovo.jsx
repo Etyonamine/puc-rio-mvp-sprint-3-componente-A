@@ -6,7 +6,7 @@ import {
     Button,
     TextField
 } from '@mui/material';
-
+import TituloPagina from '../../components/TituloPagina';
 import BotaoVoltar from '../Botoes/BotaoRetornar';
 import { useNavigate } from 'react-router-dom';
 
@@ -59,21 +59,21 @@ const TipoOperacaoFormNovo = () => {
                     }
 
                     else if (response.status === 409) {
-                        setMensagemComErro(true);   
+                        setMensagemComErro(true);
                         setMensagemErroTexto('A Sigla já existe!');
                     }
                     else {
-                        setMensagemComErro(true);                           
+                        setMensagemComErro(true);
                         setMensagemErroTexto('Ocorreu um erro na tentativa de salvar!');
-                        
+
                     }
                 })
         }
         catch (error) {
-            setMensagemComErro(true);   
+            setMensagemComErro(true);
             setMensagemErroTexto(`Ocorreu um erro na tentativa de salvar!`);
             console.log(error);
-            
+
         }
     }
 
@@ -110,14 +110,14 @@ const TipoOperacaoFormNovo = () => {
         if (reason === 'clickaway') {
             return;
         }
-        setMensagemComErro(false);         
+        setMensagemComErro(false);
         setMensagemErroTexto('');
 
     };
 
     return (
 
-        <div>
+        <div>         
             <Box
                 component="form"
                 sx={{

@@ -38,7 +38,7 @@ const MarcaNovoRegistro = () => {
 
             </Box>
             <MarcaSalvarNovoRegistro nome={nome}/>
-            <BotaoVoltar />
+            
         </div>
     )
 }

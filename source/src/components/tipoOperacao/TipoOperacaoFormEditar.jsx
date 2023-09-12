@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-
+import TituloPagina from '../../components/TituloPagina';
 import BotaoVoltar from '../Botoes/BotaoRetornar';
 
 import DialogSalvarAlteracao from './DialogSalvarAlteracaoTipoOperacao';
@@ -12,12 +12,12 @@ const TipoOperacaoFormEditar = () => {
     const [codigo, setCodigo] = useState('');
     const [sigla, setSigla] = useState('');
     const [descricao, setDescricao] = useState('');
-    
 
-    const AtualizaDadosSalvar = (()=>{
+
+    const AtualizaDadosSalvar = (() => {
         return {
-            codigo : codigo,
-            sigla : sigla,
+            codigo: codigo,
+            sigla: sigla,
             descricao: descricao
         }
     });
@@ -28,7 +28,7 @@ const TipoOperacaoFormEditar = () => {
             .then(responseData => {
                 setCodigo(responseData.codigo);
                 setSigla(responseData.sigla);
-                setDescricao(responseData.descricao);    
+                setDescricao(responseData.descricao);
             })
             .catch(error => console.error(error));
     }, []);
@@ -37,7 +37,11 @@ const TipoOperacaoFormEditar = () => {
     return (
 
         <div>
-
+            <Box
+                componet="div"
+            >
+                <TituloPagina titulo="Cadastro de Tipo de Operação - Editar registro" />
+            </Box>
             <Box
                 component="form"
                 sx={{

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import TituloPagina from '../../components/TituloPagina';
-import BotaoVoltar from '../../components/Botoes/BotaoRetornar';
+
 import MarcaSalvarEdicaoRegistro from '../../components/marcas/MarcaSalvarEdicaoRegistro';
 import {
     Box,
@@ -53,7 +53,7 @@ const MarcaEditarRegistro = (props) => {
 
             </Box>
             <MarcaSalvarEdicaoRegistro nome={nome} codigo={id} />
-            <BotaoVoltar />
+           
         </div>
     )
 }

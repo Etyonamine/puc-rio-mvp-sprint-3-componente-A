@@ -5,6 +5,7 @@ import { useState } from "react";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
+import BotaoVoltar from '../../components/Botoes/BotaoRetornar';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -49,7 +50,7 @@ export default function MarcaSalvarEdicaoRegistro(props) {
                     if (response.status === 204) {
                         handleMensagemComSucesso();
                     }
-                    else if (response.status === 500) {
+                    else if (response.status === 400) {
                         handleMensagemComErro('A Marca já existe!');
                     }
                     else {
@@ -97,9 +98,10 @@ export default function MarcaSalvarEdicaoRegistro(props) {
 
     const handleMensagemComSucesso = () => {
         setMensagemComSucesso(true);
-        setSalvando(false);
+        
 
         setTimeout(() => {
+            setSalvando(false);
             handleClose();
             redirect();
         }, 4000);
@@ -121,6 +123,7 @@ export default function MarcaSalvarEdicaoRegistro(props) {
             >
                 Salvar
             </Button>
+            <BotaoVoltar disabled = {salvando} />
 
             {/* ********************** mensagem com sucesso *************** */}
             <Snackbar open={mostrar_mensagem_sucesso} autoHideDuration={3000} onClose={handleCloseMensagemSucesso}
