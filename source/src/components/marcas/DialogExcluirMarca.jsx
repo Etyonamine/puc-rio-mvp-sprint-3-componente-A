@@ -1,4 +1,4 @@
-import * as React from 'react';
+
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -10,23 +10,28 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function DialogExcluirMarca({ tipoOperacaoParam },) {
+export default function DialogExcluirMarca({ marcaParam },) {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
-  const [mostrar_mensagem_sucesso, setMensagemComSucesso] = React.useState(false);
-  const [mostrar_mensagem_com_erro, setMensagemComErro] = React.useState(false);
+  const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
+  const [mostrar_mensagem_com_erro, setMensagemComErro] = useState(false);
+  const [lista, setLista] = useState([]); 
+  const [textoComErro, setTextoComErro] = useState('');
 
-  const [tipoOperacao, setTipoOperacao] = React.useState({});
+  useEffect(()=>{     
+    fetch(`${import.meta.env.VITE_URL_API_VEICULO}/marca_modelo_id?codigo_marca=${marcaParam.codigo}`)
+    .then(response => response.json())
+    .then(responseData => setLista(responseData))
+    .catch(error => console.error(error));
+  },[]); 
   
-  
-  
-  const handleClickOpen = () => {
-    setTipoOperacao(tipoOperacaoParam);
+  const handleClickOpen = () => {    
     setOpen(true);
   };
 
@@ -51,31 +56,40 @@ export default function DialogExcluirMarca({ tipoOperacaoParam },) {
     setMensagemComErro(false);
 
   };
+
   const handleMensagemComErro = (erro) => {
+    setTextoComErro(erro);
     setMensagemComErro(true);
-    console.log(erro);
+    
   }
+
   const handleMensagemComSucesso = () => {
     setMensagemComSucesso(true);
     setTimeout(() => {      
+      handleClose();
       redirect();
-    }, 5000);
+    }, 4000);
 
   };
 
   const redirect = () => {
-    navigate('/ListaTipoOperacao');
+    navigate('/Marca/1');
   };
 
   const excluirRegistro = (() => {
-    const data = new FormData();
-    data.append("codigo", tipoOperacao.codigo);    
-    let url = `${import.meta.env.VITE_URL_API_OPERACAO}/tipo_operacao`;
-     
+    let quantidadeModelos = lista.lista.length;
 
+    if (quantidadeModelos >0)
+    {
+      handleMensagemComErro(`Não é possível excluir! Existe [ ${quantidadeModelos} ] modelo(s) com esta marca!`);
+      return false;
+    }
+    const data = new FormData();
+    data.append("codigo", marcaParam.codigo);    
+    
     try {
 
-      fetch(url,
+      fetch(`${import.meta.env.VITE_URL_API_VEICULO}/marca`,
         {
           method: 'DELETE',
           body: data
@@ -129,7 +143,7 @@ export default function DialogExcluirMarca({ tipoOperacaoParam },) {
               textAlign: 'left'
             }}
           >
-            Tem certeza que deseja excluir a Siga <b> [ {tipoOperacao.sigla} ]</b>  com a descrição <b> [ {tipoOperacao.descricao} ] </b>?
+            Tem certeza que deseja excluir a Marca <b> [ {marcaParam.nome} ]</b>?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -151,7 +165,7 @@ export default function DialogExcluirMarca({ tipoOperacaoParam },) {
           horizontal: "center"
         }}
       >
-        <Alert onClose={handleCloseMensagemComErro} severity="error" sx={{ width: '100%' }}>Ocorreu um erro ao salvar o registro!</Alert>
+        <Alert onClose={handleCloseMensagemComErro} severity="error" sx={{ width: '100%' }}>Não é possível excluir o registro! <b>{textoComErro}</b></Alert>
       </Snackbar>
     </>
   );

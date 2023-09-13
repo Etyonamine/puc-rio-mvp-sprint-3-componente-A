@@ -18,7 +18,6 @@ import TipoOperacaoNovoRegistro from './Pages/tipoOperacao/TipoOperacaoNovoRegis
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
 import ListaTipoOperacao from "./components/tipoOperacao/ListaTipoOperacao";
 
-
 import ErrorPage from "./Pages/ErrorPage";
 
 const router = createBrowserRouter([
@@ -59,7 +58,11 @@ const router = createBrowserRouter([
         {
           path: "Marca",
           element: <Marca /> 
-        },
+        },    
+        {
+          path: "Marca/:id",
+          element: <Marca /> 
+        },         
         {
           path: "MarcaNovoRegistro",
           element: <MarcaNovoRegistro />

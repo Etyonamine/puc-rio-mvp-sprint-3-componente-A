@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import TituloPagina from '../../components/TituloPagina';
 
@@ -7,7 +7,7 @@ import {
     Box,
     TextField
 } from '@mui/material';
-import { useEffect } from 'react';
+
 
 const MarcaEditarRegistro = (props) => {
     const [nome, setNome] = useState('');

@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -14,118 +14,114 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import EditIcon from '@mui/icons-material/Edit';
+import DialogExcluirMarca from './DialogExcluirMarca';
 
-export default class ListaMarcas extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            lista: [],
-        };
-    }
 
-    componentDidMount() {
+const ListaMarcas = () => {
+
+    const [marcasEncontradas, setListaMarcas] = useState([]);
+    
+    const {id} = useParams();
+
+    useEffect(() => {
+         
         fetch(`${import.meta.env.VITE_URL_API_VEICULO}/marcas`)
             .then(response => response.json())
-            .then(responseData => this.setState(responseData))
+            .then(responseData =>setListaMarcas(responseData.lista))
             .catch(error => console.error(error));
-    }
-    render() {
-        if (this.state.loading) {
-            return <p>Carregando...</p>;
-        }
-        else {
-            const StyledTableCell = styled(TableCell)(({ theme }) => ({
-                [`&.${tableCellClasses.head}`]: {
-                    backgroundColor: theme.palette.common.black,
-                    color: theme.palette.common.white,
-                },
-                [`&.${tableCellClasses.body}`]: {
-                    fontSize: 14,
-                },
-            }));
 
-            const StyledTableRow = styled(TableRow)(({ theme }) => ({
-                '&:nth-of-type(odd)': {
-                    backgroundColor: theme.palette.action.hover,
-                },
-                // hide last border
-                '&:last-child td, &:last-child th': {
-                    border: 0,
-                },
-            }));
+    }, [id]);
 
-            return (
-                <div>
-                    <Box
-                        component="div"
-                        sx={{
-                            height: 40,
-                            width: '100%',
-                            marginTop: 1,
-                            marginBottom: 1
-                        }}
-                    >
-                        <Stack direction="row">
-                            <Button variant="contained" color="primary">
-                                <Link style={{ textDecoration: "none", color: "white" }} to={`/MarcaNovoRegistro`}>Novo registro</Link>
-                            </Button>
-                        </Stack>
+    const StyledTableCell = styled(TableCell)(({ theme }) => ({
+        [`&.${tableCellClasses.head}`]: {
+            backgroundColor: theme.palette.common.black,
+            color: theme.palette.common.white,
+        },
+        [`&.${tableCellClasses.body}`]: {
+            fontSize: 14,
+        },
+    }));
 
-                    </Box>
-                    <Box
-                        component="div"
-                    >
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} aria-label="lista">
-                                <TableHead sx={{ height: 40 }}>
-                                    <TableRow>
-                                        <StyledTableCell align="center">Código</StyledTableCell>
-                                        <StyledTableCell align="center">Nome</StyledTableCell>
-                                        <StyledTableCell align="center">Ação</StyledTableCell>
-                                    </TableRow>
-                                </TableHead>
+    const StyledTableRow = styled(TableRow)(({ theme }) => ({
+        '&:nth-of-type(odd)': {
+            backgroundColor: theme.palette.action.hover,
+        },
+        // hide last border
+        '&:last-child td, &:last-child th': {
+            border: 0,
+        },
+    }));
 
-                                <TableBody >
+    return (
+        <div>
+            <Box
+                component="div"
+                sx={{
+                    height: 40,
+                    width: '100%',
+                    marginTop: 1,
+                    marginBottom: 1
+                }}
+            >
+                <Stack direction="row">
+                    <Button variant="contained" color="primary">
+                        <Link style={{ textDecoration: "none", color: "white" }} to={`/MarcaNovoRegistro`}>Novo registro</Link>
+                    </Button>
+                </Stack>
 
-                                    {this.state.lista
-                                        .map((row) => (
-                                            <StyledTableRow
-                                                key={row.codigo}
-                                                sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: 40 }}
-                                            >
-                                                <StyledTableCell align='center' component="th" scope="row" divider={<Divider orientation="vertical" flexItem />}>
-                                                    {row.codigo}
-                                                </StyledTableCell>
-                                                <StyledTableCell align='center'>
-                                                    {row.nome}
-                                                </StyledTableCell>
-                                                <StyledTableCell align="center" >
-                                                    <table>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
-                                                                        <Link style={{ textDecoration: "none", color: "white" }} to={`/MarcaEditarRegistro/${row.codigo}`}>Editar</Link>
-                                                                    </Button>
-                                                                </td>
-                                                                <td>
-                                                                    {/* <DialogExcluirTipoOperacao tipoOperacaoParam={row} /> */}
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </StyledTableCell>
-                                            </StyledTableRow>
-                                        )
-                                        )
-                                    }
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
+            </Box>
+            <Box
+                component="div"
+            >
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="lista">
+                        <TableHead sx={{ height: 40 }}>
+                            <TableRow>
+                                <StyledTableCell align="center">Código</StyledTableCell>
+                                <StyledTableCell align="center">Nome</StyledTableCell>
+                                <StyledTableCell align="center">Ação</StyledTableCell>
+                            </TableRow>
+                        </TableHead>
 
-                </div>
-            )
-        }
-    }
+                        <TableBody >
+                            {
+                                marcasEncontradas.map((row) => (
+                                    <StyledTableRow
+                                        key={row.codigo}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: 40 }}
+                                    >
+                                        <StyledTableCell align='center' component="th" scope="row" divider={<Divider orientation="vertical" flexItem />}>
+                                            {row.codigo}
+                                        </StyledTableCell>
+                                        <StyledTableCell align='center'>
+                                            {row.nome}
+                                        </StyledTableCell>
+                                        <StyledTableCell align="center" >
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
+                                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/MarcaEditarRegistro/${row.codigo}`}>Editar</Link>
+                                                            </Button>
+                                                        </td>
+                                                        <td>
+                                                            {<DialogExcluirMarca marcaParam={{ codigo: row.codigo, nome: row.nome }} />}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </StyledTableCell>
+                                    </StyledTableRow>
+                                )
+                                )
+                            }
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
+
+        </div>
+    )
 }
+export default ListaMarcas;
