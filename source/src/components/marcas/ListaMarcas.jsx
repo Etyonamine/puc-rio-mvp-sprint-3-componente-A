@@ -21,7 +21,7 @@ const ListaMarcas = () => {
 
     const [marcasEncontradas, setListaMarcas] = useState([]);
     
-    const {id} = useParams();
+   /*  const {id} = useParams(); */
 
     useEffect(() => {
          

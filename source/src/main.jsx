@@ -13,6 +13,7 @@ import Veiculo from "./Pages/Veiculo/Veiculo";
 import Marca from './Pages/Marca/Marca';
 import MarcaNovoRegistro from './Pages/Marca/MarcaNovoRegistro';
 import MarcaEditarRegistro from './Pages/Marca/MarcaEditarRegistro';
+import Modelo from './pages/Modelo/Modelo';
 import TipoOperacao from './Pages/tipoOperacao/TipoOperacao';
 import TipoOperacaoNovoRegistro from './Pages/tipoOperacao/TipoOperacaoNovoRegistro';
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
@@ -73,7 +74,7 @@ const router = createBrowserRouter([
         },        
         {
           path: "Modelo",
-          element: <Veiculo /> 
+          element: <Modelo /> 
         },
         {
           path : "oldcontact",
