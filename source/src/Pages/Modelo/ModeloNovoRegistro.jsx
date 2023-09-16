@@ -224,11 +224,6 @@ const ModeloNovoRegistro = () => {
                 <Alert onClose={handleCloseMensagemComErro} severity="error" sx={{ width: '100%' }}>Ocorreu o erro: <b> {mensagemErroTexto} </b></Alert>
             </Snackbar>
 
-
-
-
-
-
         </div>
     )
 }
