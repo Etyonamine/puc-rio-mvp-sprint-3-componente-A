@@ -88,7 +88,7 @@ const ListaMarcas = () => {
             if (error.message === "Failed to fetch")
                 {
                      // get error message from body or default to response status                    
-                     alert('A comunicação com os serviços de Modelos de Veículos está com problemas!');
+                     alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
                      return Promise.reject(error);
                 } 
             handleMensagemComErro(error);

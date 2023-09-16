@@ -14,12 +14,15 @@ import Marca from './Pages/Marca/Marca';
 import MarcaNovoRegistro from './Pages/Marca/MarcaNovoRegistro';
 import MarcaEditarRegistro from './Pages/Marca/MarcaEditarRegistro';
 import Modelo from './pages/Modelo/Modelo';
+import ModeloNovoRegistro from './pages/Modelo/ModeloNovoRegistro.jsx';
+import ModeloEditarRegistro from './pages/Modelo/ModeloEditarRegistro';
 import TipoOperacao from './Pages/tipoOperacao/TipoOperacao';
 import TipoOperacaoNovoRegistro from './Pages/tipoOperacao/TipoOperacaoNovoRegistro';
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
 import ListaTipoOperacao from "./components/tipoOperacao/ListaTipoOperacao";
 
 import ErrorPage from "./Pages/ErrorPage";
+
 
 const router = createBrowserRouter([
   {
@@ -71,6 +74,14 @@ const router = createBrowserRouter([
         {
           path: "Modelo",
           element: <Modelo /> 
+        },
+        {
+          path: "ModeloNovoRegistro",
+          element: <ModeloNovoRegistro /> 
+        },
+        {
+          path: "ModeloEditarRegistro/:id",
+          element: <ModeloEditarRegistro /> 
         },
         {
           path : "oldcontact",
