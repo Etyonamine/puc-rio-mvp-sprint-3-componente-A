@@ -30,7 +30,14 @@ const TipoOperacaoFormEditar = () => {
                 setSigla(responseData.sigla);
                 setDescricao(responseData.descricao);
             })
-            .catch(error => console.error(error));
+            .catch(error =>{
+                if (error.message === "Failed to fetch")
+                {
+                     // get error message from body or default to response status                    
+                     alert('A comunicação com os serviços de Tipos de Operações está com problemas!');
+                     return Promise.reject(error);
+                } 
+            });
     }, []);
 
 

@@ -44,7 +44,8 @@ export default function MarcaSalvarEdicaoRegistro(props) {
             fetch(url,
                 {
                     method: 'PUT',
-                    body: data
+                    body: data,
+                    mode: 'no-cors' 
                 })
                 .then((response) => {
                     if (response.status === 204) {
@@ -59,7 +60,12 @@ export default function MarcaSalvarEdicaoRegistro(props) {
                     }
                 })
         } catch (error) {
-            console.log(error);
+            if (error.message === "Failed to fetch")
+            {
+                 // get error message from body or default to response status                    
+                 alert('A comunicação com os serviços da Marca de Veículos está com problemas!');
+                 return Promise.reject(error);
+            } 
             handleMensagemComErro(error);
         }
     }

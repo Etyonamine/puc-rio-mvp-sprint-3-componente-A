@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import TituloPagina from '../../components/TituloPagina';
-import BotaoVoltar from '../../components/Botoes/BotaoRetornar';
 import MarcaSalvarNovoRegistro from '../../components/marcas/MarcaSalvarNovoRegistro';
 import {
     Box,

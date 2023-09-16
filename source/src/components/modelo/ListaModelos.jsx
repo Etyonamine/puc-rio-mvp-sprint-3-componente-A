@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import { Link, useParams } from 'react-router-dom';
-import Box from '@mui/material/Box';
+import {
+  Box
+  } from '@mui/material';
 
+import { DataGrid } from '@mui/x-data-grid';
 const columns = [
   {
     field: 'codigo',
@@ -27,16 +28,20 @@ const columns = [
 ];
 
 export default function ListaModelos() {
-  const [modelosEncontrados, setListaModelos] = useState([]);
-  const rows = [];
-  /*   const {id} = useParams(); */
-
+  const [modelosEncontrados, setListaModelos] = useState([]);  
+ 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_URL_API_VEICULO}/modelos`)
+    fetch(`${import.meta.env.VITE_URL_API_VEICULO}/modelos`,{ mode: 'no-cors' })
       .then(response => response.json())
-      .then(responseData =>
-        setListaModelos(responseData.lista))
-      .catch(error => console.error(error));
+      .then(responseData => setListaModelos(responseData.lista))
+      .catch(error => {       
+        if (error.message === "Failed to fetch")
+                {
+                     // get error message from body or default to response status                    
+                     alert('A comunicação com o serviço de consulta de Modelo de Veículos está com problemas!');
+                      
+                }     
+      });
 
   }, []);
   const localizedTextsMap = {
@@ -47,6 +52,8 @@ export default function ListaModelos() {
     columnMenuHideColumn: "Ocultar",
     columnMenuShowColumns: "Mostrar colunas"
   };
+
+
   return (
 
     <div style={{ height: 400, width: '100%' }}>
@@ -59,21 +66,27 @@ export default function ListaModelos() {
           },
         }}
       >
+          
+        
         <DataGrid
-          sx={{ m: 2 }}          
+          sx={{ m: 2 }}
           rows={modelosEncontrados}
           getRowId={(row) => row.codigo}
           columns={columns}
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 5 },
-            },
-          }}
+            },            
+          }}          
           pageSizeOptions={[5, 10]}
           checkboxSelection
           localeText={localizedTextsMap}
+          
         />
-      </Box>
+     
+      </Box>      
+            
     </div>
+
   );
 }

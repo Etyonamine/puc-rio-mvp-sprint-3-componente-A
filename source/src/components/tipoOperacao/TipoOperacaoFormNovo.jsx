@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import {
-    Alert,
+import {    
     Snackbar,
     Box,
     Button,
     TextField
 } from '@mui/material';
-import TituloPagina from '../../components/TituloPagina';
 import BotaoVoltar from '../Botoes/BotaoRetornar';
 import { useNavigate } from 'react-router-dom';
 
+ 
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const TipoOperacaoFormNovo = () => {
 
@@ -50,7 +53,8 @@ const TipoOperacaoFormNovo = () => {
             fetch(url,
                 {
                     method: 'POST',
-                    body: data
+                    body: data, 
+                    mode: 'no-cors'
                 })
                 .then((response) => {
 
@@ -70,6 +74,12 @@ const TipoOperacaoFormNovo = () => {
                 })
         }
         catch (error) {
+            if (error.message === "Failed to fetch")
+            {
+                 // get error message from body or default to response status                    
+                 alert('A comunicação com os serviços de Tipos de Operações está com problemas!');
+                 return Promise.reject(error);
+            } 
             setMensagemComErro(true);
             setMensagemErroTexto(`Ocorreu um erro na tentativa de salvar!`);
             console.log(error);
@@ -118,6 +128,7 @@ const TipoOperacaoFormNovo = () => {
     return (
 
         <div>         
+          
             <Box
                 component="form"
                 sx={{

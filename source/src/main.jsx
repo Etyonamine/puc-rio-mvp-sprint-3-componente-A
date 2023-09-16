@@ -59,11 +59,7 @@ const router = createBrowserRouter([
         {
           path: "Marca",
           element: <Marca /> 
-        },    
-        {
-          path: "Marca/:id",
-          element: <Marca /> 
-        },         
+        },              
         {
           path: "MarcaNovoRegistro",
           element: <MarcaNovoRegistro />
