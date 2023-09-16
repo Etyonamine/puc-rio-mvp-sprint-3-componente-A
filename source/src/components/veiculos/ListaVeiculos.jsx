@@ -30,12 +30,13 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 
-export default function ListaModelos() {
-  const [modelosEncontrados, setListaModelos] = useState([]);
-  const [nome, setNome] = useState('');
+export default function ListaVeiculos() {
+
+  const [veiculos, setVeiculos] = useState([]);
+  const [placa, setPlaca] = useState('');
   const [codigo, setCodigo] = useState(0);
 
-  const [quantidadeVeiculos, setQuantidadeVeiculos] = useState(0);
+  const [quantidadeOperacoes, setQuantidadeOperacoes] = useState(0);
   
   const [open, setOpen] = React.useState(false);
   const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
@@ -89,9 +90,9 @@ export default function ListaModelos() {
 
     };
     const excluirRegistro = () => {
-      consulta_veiculos();
-      if (quantidadeVeiculos > 0) {
-          handleMensagemComErro(`Não é possível excluir! Existe [ ${quantidadeVeiculos} ] veículos(s) com este modelo!`);
+      consulta_operacoes();
+      if (quantidadeOperacoes > 0) {
+          handleMensagemComErro(`Não é possível excluir! Existe [ ${quantidadeOperacoes} ] Operações registradas com este veículo!`);
           return false;
       }
       const data = new FormData();
@@ -99,7 +100,7 @@ export default function ListaModelos() {
 
       try {
 
-          fetch(`${import.meta.env.VITE_URL_API_VEICULO}/modelo`,
+          fetch(`${import.meta.env.VITE_URL_API_VEICULO}/veiculos`,
               {
                   method: 'DELETE',
                   body: data 
@@ -120,6 +121,7 @@ export default function ListaModelos() {
           handleMensagemComErro(error);
       }
     }
+
     const handleMensagemComSucesso = () => {
         setMensagemComSucesso(true);
         setTimeout(() => {
@@ -133,29 +135,37 @@ export default function ListaModelos() {
         setTextoComErro(erro);
         setMensagemComErro(true);
     }
+
     const AbrirModalExcluir = (data) => {
 
-      setNome(data.nome);
+      setPlaca(data.placa);
       setCodigo(data.codigo);
       setOpen(true);
     }
+
   const getLista=()=>{
-    fetch(`${import.meta.env.VITE_URL_API_VEICULO}/modelos`)
+    fetch(`${import.meta.env.VITE_URL_API_VEICULO}/veiculos`)
     .then(response => response.json())
-    .then(responseData => setListaModelos(responseData.lista))
+    .then(responseData => setVeiculos(responseData.lista))
     .catch(error => {
       if (error.message === "Failed to fetch") {
         // get error message from body or default to response status                    
-        alert('A comunicação com o serviço de consulta de Modelo de Veículos está com problemas!');
+        alert('A comunicação com o serviço de consulta de Veiculos está com problemas!');
 
       }
     });
   }
-  const consulta_veiculos=()=>{
-    fetch(`${import.meta.env.VITE_URL_API_VEICULO}/veiculo_modelo_id?codigo_modelo=${codigo}`)
+  const consulta_operacoes=()=>{
+    fetch(`${import.meta.env.VITE_URL_API_OPERACAO}/operacao_veiculo_id?codigo_veiculo=${codigo}`)
             .then(response => response.json())
-            .then(responseData => setQuantidadeVeiculos(responseData.lista.length))
-            .catch(error => console.error(error));
+            .then(responseData => setQuantidadeOperacoes(responseData.lista.length))
+            .catch(error => {
+                console.error(error);
+                if (error.message === "Failed to fetch") {
+                    // get error message from body or default to response status                    
+                    alert('A comunicação com o serviço de consulta de operações está com problemas!');
+                }
+            });
   }
   return (
     <div>
@@ -188,14 +198,16 @@ export default function ListaModelos() {
                         <TableRow>
                             <StyledTableCell align="center">Código</StyledTableCell>
                             <StyledTableCell align="center">Marca</StyledTableCell>
-                            <StyledTableCell align="center">Nome</StyledTableCell>
+                            <StyledTableCell align="center">Modelo</StyledTableCell>                            
+                            <StyledTableCell align="center">Cor</StyledTableCell>
+                            <StyledTableCell align="center">Placa</StyledTableCell>
                             <StyledTableCell align="center">Ação</StyledTableCell>
                         </TableRow>
                     </TableHead>
 
                     <TableBody >
                         {
-                            modelosEncontrados.map((row) => (
+                            veiculos.map((row) => (
                                 <StyledTableRow
                                     key={row.codigo}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: 40 }}
@@ -208,10 +220,18 @@ export default function ListaModelos() {
                                         {row.codigo}
                                     </StyledTableCell>
                                     <StyledTableCell align='center'>
-                                        {row.nome_marca}
+                                        {
+                                            row.modelo[0].marca[0].nome
+                                        }
                                     </StyledTableCell>
                                     <StyledTableCell align='center'>
-                                        {row.nome}
+                                        {row.modelo[0].nome}
+                                    </StyledTableCell>
+                                    <StyledTableCell align='center'>
+                                        {row.cor[0].nome}
+                                    </StyledTableCell>
+                                    <StyledTableCell align='center'>
+                                        {row.placa}
                                     </StyledTableCell>
                                     <StyledTableCell align="center" >
                                         <table>
@@ -278,7 +298,7 @@ export default function ListaModelos() {
                             textAlign: 'left'
                         }}
                     >
-                        Tem certeza que deseja excluir a Marca <b> [ {nome} ]</b>?
+                        Tem certeza que deseja excluir a Marca <b> [ {placa} ]</b>?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
