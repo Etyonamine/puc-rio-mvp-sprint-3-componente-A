@@ -13,8 +13,10 @@ import BotaoRetornar from '../../components/Botoes/BotaoRetornar';
 import { useParams } from 'react-router-dom';
 import MuiAlert from '@mui/material/Alert';
 import SaveIcon from '@mui/icons-material/Save';
+import { useNavigate } from 'react-router-dom';
 
 const ModeloEditarRegistro = () => {
+    const navigate = useNavigate();
     const [nome, setNome] = useState('');
     const { id } = useParams();
     const [salvando, setSalvando] = useState(false);
@@ -98,7 +100,7 @@ const ModeloEditarRegistro = () => {
 
                 })
                 .then((response) => {
-                    if (response.status === 200) {
+                    if (response.status === 204) {
                         handleMensagemComSucesso();
                     }
                     else if (response.status === 409) {
@@ -153,16 +155,20 @@ const ModeloEditarRegistro = () => {
 
     const handleMensagemComSucesso = () => {
         setMensagemComSucesso(true);
-
+        
 
         setTimeout(() => {
             setSalvando(false);
             handleClose();
-
+            redirecionar();
         }, 4000);
 
     };
 
+    const redirecionar = ()=>{
+        navigate('/Modelo');
+    }
+ 
     return (
 
         <div>
@@ -224,7 +230,7 @@ const ModeloEditarRegistro = () => {
                     Salvar
                 </Button>
                 &nbsp;
-                <BotaoRetornar />
+                <BotaoRetornar disabled = {salvando} />
             </div>
 
             {/* ********************** mensagem com sucesso *************** */}

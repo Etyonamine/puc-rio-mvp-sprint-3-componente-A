@@ -1,6 +1,7 @@
 import React, { useState,useEffect,forwardRef } from 'react';
 import TituloPagina from '../../components/TituloPagina';
 import BotaoRetornar from '../../components/Botoes/BotaoRetornar';
+import { useNavigate } from 'react-router-dom';
 import {       
     Button,
     FormControl,
@@ -16,6 +17,7 @@ import MuiAlert from '@mui/material/Alert';
 
 
 const ModeloNovoRegistro = () => {
+    const navigate = useNavigate();
     const [nome, setNome] = useState('');
     const [salvando, setSalvando] = useState(false);
     const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
@@ -111,7 +113,6 @@ const ModeloNovoRegistro = () => {
         }
         setMensagemComSucesso(false);
         setSalvando(false);
-
     };
 
     const handleCloseMensagemComErro = (event, reason) => {
@@ -138,10 +139,14 @@ const ModeloNovoRegistro = () => {
         setTimeout(() => {
             setSalvando(false);
             handleClose();            
-                    
+            redirecionar();
         }, 4000);
 
     };
+
+    const redirecionar = ()=>{
+        navigate('/Modelo');
+    }
  
     return (
 
@@ -201,7 +206,7 @@ const ModeloNovoRegistro = () => {
                 Salvar
             </Button>
             &nbsp;
-            <BotaoRetornar />
+            <BotaoRetornar disabled = {salvando} />
            
 
             {/* ********************** mensagem com sucesso *************** */}
@@ -225,6 +230,6 @@ const ModeloNovoRegistro = () => {
             </Snackbar>
 
         </div>
-    )
+    )    
 }
 export default ModeloNovoRegistro;

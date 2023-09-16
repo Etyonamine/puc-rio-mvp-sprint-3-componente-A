@@ -18,4 +18,4 @@ Esta é uma aplicação front-end que irá consumir as API abaixo:
 1)Iniciar os serviços do componente C e D
 
 2)Ambiente de desenvolvimento: 
-    2.1)No diretório raiz executar o comando = npm run dev
+    2.1)Acessar o diretório source e executar o comando = npm run dev
