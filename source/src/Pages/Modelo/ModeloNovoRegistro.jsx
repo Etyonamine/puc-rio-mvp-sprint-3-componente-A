@@ -52,8 +52,51 @@ const ModeloNovoRegistro = () => {
             });
     }
 
-    const SalvarRegistro=()=>{
-        return true;
+    const SalvarRegistro=()=>{        
+
+        // validando 
+        if (nome === null || nome.trim() === '') {
+            handleMensagemComErro('Por favor, informar o nome do Modelo do veículo!');
+            return false;
+        }
+
+        //Utilizando a API
+        setSalvando(true);
+        let url = `${import.meta.env.VITE_URL_API_VEICULO}/modelo`;        
+        
+        try {
+            
+            const data = new FormData();
+            data.append("codigo_marca", codigoMarca);
+            data.append("nome", nome);
+
+            fetch(url,
+                {
+                    method: 'POST',
+                    body: data
+                     
+                })
+                .then((response) => {
+                    if (response.status === 200) {
+                        handleMensagemComSucesso();
+                    }
+                    else if (response.status === 409) {
+                        handleMensagemComErro('O modelo já existe!');
+                    }
+                    else {
+                        handleMensagemComErro('');
+                       
+                    }
+                })
+        } catch (error) {
+            if (error.message === "Failed to fetch")
+            {
+                 // get error message from body or default to response status                    
+                 alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
+                 return Promise.reject(error);
+            } 
+            handleMensagemComErro(error);
+        }
     }
     
     const handleClose = () => {
@@ -95,15 +138,11 @@ const ModeloNovoRegistro = () => {
         setTimeout(() => {
             setSalvando(false);
             handleClose();            
-            redirect();            
+                    
         }, 4000);
 
     };
-
-    const redirect = () => {
-        navigate('/Marca');
-      };
-
+ 
     return (
 
         <div>

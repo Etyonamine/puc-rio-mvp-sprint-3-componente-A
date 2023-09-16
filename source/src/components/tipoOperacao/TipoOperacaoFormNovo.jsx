@@ -53,8 +53,7 @@ const TipoOperacaoFormNovo = () => {
             fetch(url,
                 {
                     method: 'POST',
-                    body: data, 
-                    mode: 'no-cors'
+                    body: data 
                 })
                 .then((response) => {
 

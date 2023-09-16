@@ -44,8 +44,7 @@ export default function MarcaSalvarEdicaoRegistro(props) {
             fetch(url,
                 {
                     method: 'PUT',
-                    body: data,
-                    mode: 'no-cors' 
+                    body: data                    
                 })
                 .then((response) => {
                     if (response.status === 204) {

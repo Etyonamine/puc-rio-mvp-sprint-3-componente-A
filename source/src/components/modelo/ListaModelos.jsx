@@ -102,8 +102,8 @@ export default function ListaModelos() {
           fetch(`${import.meta.env.VITE_URL_API_VEICULO}/modelo`,
               {
                   method: 'DELETE',
-                  body: data,
-                  mode: 'no-cors' 
+                  body: data 
+                 
               })
               .then((response) => {
                   if (response.status === 204) {

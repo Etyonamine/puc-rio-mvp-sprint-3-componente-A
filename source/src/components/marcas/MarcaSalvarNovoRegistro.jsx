@@ -41,8 +41,7 @@ export default function MarcaSalvarNovoRegistro(props) {
             fetch(url,
                 {
                     method: 'POST',
-                    body: data,
-                    mode:'no-cors'
+                    body: data 
                 })
                 .then((response) => {
                     if (response.status === 200) {
