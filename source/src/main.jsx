@@ -10,6 +10,7 @@ import {  createBrowserRouter, RouterProvider, Navigate} from "react-router-dom"
 import Home from "./Pages/Home";
 import Registro from "./Pages/Operacao/Registro";
 import Veiculo from "./Pages/Veiculo/Veiculo";
+import VeiculoFormulario from './pages/Veiculo/VeiculoFormulario.jsx';
 import Marca from './Pages/Marca/Marca';
 import MarcaNovoRegistro from './Pages/Marca/MarcaNovoRegistro';
 import MarcaEditarRegistro from './Pages/Marca/MarcaEditarRegistro';
@@ -43,6 +44,14 @@ const router = createBrowserRouter([
           path: "Veiculo",
           element: <Veiculo /> 
         },        
+        {
+          path: "VeiculoFormulario",
+          element:<VeiculoFormulario />
+        },
+        {
+          path: "VeiculoFormulario/:id",
+          element:<VeiculoFormulario />
+        },
         {
           path: "TipoOperacao",
           element: <TipoOperacao /> 

@@ -157,6 +157,8 @@ const ModeloNovoRegistro = () => {
                 <TituloPagina titulo="Cadastro de Modelo de Veículo - Novo registro" />
             </div>
             <br />
+
+            
             <div>
                 <FormControl sx={{ minWidth: 300 }} noValidate
                     autoComplete="off">
@@ -195,7 +197,7 @@ const ModeloNovoRegistro = () => {
             </div>
             <br />
            
-
+            {/* ********************** botões ***************************** */}
             <Button
                 variant="contained"
                 endIcon={<SaveIcon />}
@@ -218,6 +220,7 @@ const ModeloNovoRegistro = () => {
             >
                 <Alert onClose={handleCloseMensagemSucesso} severity="success" sx={{ width: '100%' }}>Registro salvo com sucesso!</Alert>
             </Snackbar>
+
 
             {/* ********************** mensagem com erro *************** */}
             <Snackbar open={mostrar_mensagem_com_erro} autoHideDuration={3000} onClose={handleCloseMensagemComErro}

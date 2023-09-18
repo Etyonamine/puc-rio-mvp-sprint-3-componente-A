@@ -68,6 +68,7 @@ export default function ListaVeiculos() {
       border: 0,
     },
   }));
+
  const handleClose = () => {
         setOpen(false);
         handleCloseMensagemComErro();
@@ -100,7 +101,7 @@ export default function ListaVeiculos() {
 
       try {
 
-          fetch(`${import.meta.env.VITE_URL_API_VEICULO}/veiculos`,
+          fetch(`${import.meta.env.VITE_URL_API_VEICULO}/veiculo`,
               {
                   method: 'DELETE',
                   body: data 
@@ -181,7 +182,7 @@ export default function ListaVeiculos() {
         >
             <Stack direction="row">
                 <Button variant="contained" color="primary">
-                    <Link style={{ textDecoration: "none", color: "white" }} to={`/ModeloNovoRegistro`}>Novo registro</Link>
+                    <Link style={{ textDecoration: "none", color: "white" }} to={`/VeiculoFormulario`}>Novo registro</Link>
                 </Button>
 
             </Stack>
