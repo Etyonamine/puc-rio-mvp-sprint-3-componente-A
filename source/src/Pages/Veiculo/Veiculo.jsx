@@ -1,10 +1,11 @@
 import React from "react";
 import ListaVeiculos from "../../components/veiculos/ListaVeiculos";
+import TituloPagina from '../../components/TituloPagina';
 
 const Veiculo = () => {
     return (
         <div>
-            <h1>Registros de Veiculos</h1>
+            <TituloPagina titulo = "Lista de Veículos"  />
             <ListaVeiculos />
         </div>
     );

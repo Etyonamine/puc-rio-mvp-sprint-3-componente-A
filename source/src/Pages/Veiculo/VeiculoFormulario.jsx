@@ -22,12 +22,12 @@ const VeiculoFormulario = () => {
 
     const [salvando, setSalvando] = useState(false);
     const { id } = useParams();
-    const [placa, setPlaca] = useState('');   
-    const [novoRegistro, setNovoRegistro] = useState(false);  
-    const [tituloPaginaCorrente,setTituloPagina] = useState('');
+    const [placa, setPlaca] = useState('');
+    const [novoRegistro, setNovoRegistro] = useState(false);
+    const [tituloPaginaCorrente, setTituloPagina] = useState('');
 
     const navigate = useNavigate();
-    const urlVeiculo =`${import.meta.env.VITE_URL_API_VEICULO}`;
+    const urlVeiculo = `${import.meta.env.VITE_URL_API_VEICULO}`;
 
     /** variaveis de mensagem  */
     const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
@@ -35,12 +35,14 @@ const VeiculoFormulario = () => {
     const [mensagemErroTexto, setMensagemErroTexto] = React.useState('');
 
     /** variaveis dos combos */
-    const [codigoMarca, setCodigoMarca] = useState('')
+    const [codigoMarca, setCodigoMarca] = useState(0)
     const [marcasEncontradas, setListaMarcas] = useState([]);
-    const [codigoModelo, setCodigoModelo] = useState('')
+    const [codigoModelo, setCodigoModelo] = useState('')    
     const [modelosEncontrados, setListaModelo] = useState([]);
-    const [codigoCor, setCodigoCor] = useState([]);
-    const [coresEncontradas, setListaCores] = useState([]);
+    const [codigoCor, setCodigoCor] = useState('');
+    const [coresEncontradas, setListaCores] = useState([{ cor: null }]);
+
+
 
     /** tratamento do campo placa */
     const ValidaPlaca = (valor) => {
@@ -53,8 +55,11 @@ const VeiculoFormulario = () => {
 
     /** ################# rotinas combos de seleção ################################################### */
     const handleChangeMarca = (event) => {
+
         setCodigoMarca(event.target.value);
-        setCodigoModelo();
+        
+
+
     }
 
     const handleChangeModelo = (event) => {
@@ -63,6 +68,7 @@ const VeiculoFormulario = () => {
 
     const handleChangeCor = (event) => {
         setCodigoCor(event.target.value);
+       
 
     }
 
@@ -84,10 +90,15 @@ const VeiculoFormulario = () => {
     }
 
     const ListaModelos = () => {
-        fetch(`${urlVeiculo}/marca_modelo_id?codigo_marca=${codigoMarca}`)
+        if(codigoMarca > 0 ){
+            fetch(`${urlVeiculo}/marca_modelo_id?codigo_marca=${codigoMarca}`)
             .then(response => response.json())
             .then(responseData => {
-                setListaModelo(responseData.lista);
+
+                if (responseData.lista.length > 0) {
+                    setListaModelo(responseData.lista);
+                }
+
 
             })
             .catch(error => {
@@ -97,6 +108,9 @@ const VeiculoFormulario = () => {
                     return Promise.reject(error);
                 }
             });
+
+        }
+        
     }
 
     const ListaCores = () => {
@@ -116,52 +130,58 @@ const VeiculoFormulario = () => {
     }
 
     const GetVeiculo = () => {
-        console.log(urlVeiculo)
+
         fetch(`${urlVeiculo}/veiculo_id?codigo=${id}`)
-        .then(response => response.json())
-        .then(responseData => {                       
-            setCodigoMarca(responseData.veiculo.modelo[0].codigo_marca);                       
-            setCodigoModelo(responseData.veiculo.codigo_modelo); 
-            setCodigoCor(responseData.veiculo.cor[0].codigo);
-            setPlaca(responseData.veiculo.placa);
-        })
-        .catch(error => {
-            if (error.message === "Failed to fetch") {
-                // get error message from body or default to response status                    
-                alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
-                return Promise.reject(error);
-            }
-        });
+            .then(response => response.json())
+            .then(responseData => {
+                setPlaca(responseData.veiculo.placa);
+                setCodigoCor(responseData.veiculo.cor[0].codigo);    
+                setCodigoMarca(responseData.veiculo.modelo[0].codigo_marca);             
+
+                setTimeout(() => {
+                    setCodigoModelo(responseData.veiculo.codigo_modelo);    
+                }, 200);
+
+            })
+            .catch(error => {
+                if (error.message === "Failed to fetch") {
+                    // get error message from body or default to response status                    
+                    alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
+                    return Promise.reject(error);
+                }
+            });
     }
 
     /** Executando a lista */
     useEffect(() => {
-         
         ListaMarcas();
         ListaCores();
 
         setTituloPagina('Cadastro de Veículo - Editar Registro')
-        
+
         if (id === '' || id === 0 || id == undefined) {
             setNovoRegistro(true);
             setTituloPagina('Cadastro de Veículo - Novo Registro')
-            
-        }else{
+
+        } else {
             GetVeiculo();
         }
-        
+
+
     }, []);
 
     useEffect(() => {
-        if (codigoMarca !== '') {
-            ListaModelos();
-        }
+
+        ListaModelos();
+
     }, [codigoMarca])
+
+    
 
     /** ################# rotina Salvar Registro ###################################################### */
     /** Atualizar Registro */
     const atualizarRegistro = () => {
-        
+
         const data = new FormData();
         data.append("codigo_modelo", codigoModelo);
         data.append("cor_id", codigoCor);
@@ -318,7 +338,6 @@ const VeiculoFormulario = () => {
     }
 
 
-
     /* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Renderizaçã @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
     return (
         <div>
@@ -326,7 +345,7 @@ const VeiculoFormulario = () => {
             <Box
                 component="div"
             >
-                <TituloPagina titulo= { tituloPaginaCorrente }/>
+                <TituloPagina titulo={tituloPaginaCorrente} />
             </Box>
             <br />
 
@@ -344,14 +363,18 @@ const VeiculoFormulario = () => {
                         id="marcas_select"
                         value={codigoMarca}
                         label="Marca"
-                        onChange={handleChangeMarca}
+                        onChange={(e) => handleChangeMarca(e)}
                     >
-                        <MenuItem value=''>Selecione uma marca</MenuItem>
+                        <MenuItem value={0} key={'ma0'} >Selecione um da lista</MenuItem>
                         {
+
                             marcasEncontradas.map((row) => (
-                                <MenuItem value={row.codigo} key={row.codigo} >{row.nome}</MenuItem>
+                                <MenuItem value={row.codigo} key={`ma${row.codigo}`} >{row.nome}</MenuItem>
                             ))
+
                         }
+
+
                     </Select>
                 </FormControl>
                 &nbsp;
@@ -363,14 +386,15 @@ const VeiculoFormulario = () => {
                         id="modelos_select"
                         value={codigoModelo}
                         label="Modelo"
-                        onChange={handleChangeModelo}
+                        onChange={(e) => handleChangeModelo(e)}
                     >
-                        <MenuItem value=''>Selecione uma modelo</MenuItem>
+                        <MenuItem value={''} key={'mo0'} >Selecione um da lista</MenuItem>
                         {
                             modelosEncontrados.map((row) => (
                                 <MenuItem value={row.codigo} key={row.codigo} >{row.nome}</MenuItem>
                             ))
                         }
+
                     </Select>
                 </FormControl>
                 &nbsp;
@@ -381,13 +405,13 @@ const VeiculoFormulario = () => {
                         id="cores_select"
                         value={codigoCor}
                         label="Cor"
-                        onChange={handleChangeCor}
+                        onChange={(e) => handleChangeCor(e)}
                         required
                     >
-                        <MenuItem value=''>Selecione uma modelo</MenuItem>
+                        <MenuItem value={''} key={'c0'} >Selecione um da lista</MenuItem>
                         {
                             coresEncontradas.map((row) => (
-                                <MenuItem value={row.codigo} key={row.codigo} >{row.nome}</MenuItem>
+                                <MenuItem value={row.codigo} key={`co${row.codigo}`} >{row.nome}</MenuItem>
                             ))
                         }
                     </Select>
