@@ -241,7 +241,7 @@ export default function ListaVeiculos() {
                                                     <td>
                                                         <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
 
-                                                            <Link style={{ textDecoration: "none", color: "white" }} to={`/ModeloEditarRegistro/${row.codigo}`}>Editar</Link>
+                                                            <Link style={{ textDecoration: "none", color: "white" }} to={`/VeiculoFormulario/${row.codigo}`}>Editar</Link>
 
                                                         </Button>
                                                     </td>

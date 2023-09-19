@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, Component } from 'react'
+import React, { useState, useEffect, forwardRef } from 'react'
 import TituloPagina from '../../components/TituloPagina';
 import BotaoVoltar from '../../components/Botoes/BotaoRetornar';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -15,19 +15,19 @@ import {
 import SaveIcon from '@mui/icons-material/Save';
 import MuiAlert from '@mui/material/Alert';
 
- 
- 
+
+
 
 const VeiculoFormulario = () => {
 
     const [salvando, setSalvando] = useState(false);
-    const { id } = useParams;
-    const [placa, setPlaca] = useState('');
-    const [values, setValues] = React.useState({
-        textmask: 'XXX-XXXX'
-    });
+    const { id } = useParams();
+    const [placa, setPlaca] = useState('');   
+    const [novoRegistro, setNovoRegistro] = useState(false);  
+    const [tituloPaginaCorrente,setTituloPagina] = useState('');
 
     const navigate = useNavigate();
+    const urlVeiculo =`${import.meta.env.VITE_URL_API_VEICULO}`;
 
     /** variaveis de mensagem  */
     const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
@@ -42,7 +42,7 @@ const VeiculoFormulario = () => {
     const [codigoCor, setCodigoCor] = useState([]);
     const [coresEncontradas, setListaCores] = useState([]);
 
-    /** tratamento do campo placa */    
+    /** tratamento do campo placa */
     const ValidaPlaca = (valor) => {
         let regra = new RegExp(/^[a-zA-Z]{3}[0-9][A-Za-z0-9][0-9]{2}$/);
         return regra.test(valor);
@@ -54,7 +54,7 @@ const VeiculoFormulario = () => {
     /** ################# rotinas combos de seleção ################################################### */
     const handleChangeMarca = (event) => {
         setCodigoMarca(event.target.value);
-        setCodigoModelo('');
+        setCodigoModelo();
     }
 
     const handleChangeModelo = (event) => {
@@ -68,7 +68,7 @@ const VeiculoFormulario = () => {
 
 
     const ListaMarcas = () => {
-        fetch(`${import.meta.env.VITE_URL_API_VEICULO}/marcas`)
+        fetch(`${urlVeiculo}/marcas`)
             .then(response => response.json())
             .then(responseData => {
                 setListaMarcas(responseData.lista);
@@ -83,8 +83,8 @@ const VeiculoFormulario = () => {
             });
     }
 
-    const ListaModelos = (codigoMarcaSelecionada) => {
-        fetch(`${import.meta.env.VITE_URL_API_VEICULO}/marca_modelo_id?codigo_marca=${codigoMarcaSelecionada}`)
+    const ListaModelos = () => {
+        fetch(`${urlVeiculo}/marca_modelo_id?codigo_marca=${codigoMarca}`)
             .then(response => response.json())
             .then(responseData => {
                 setListaModelo(responseData.lista);
@@ -100,7 +100,7 @@ const VeiculoFormulario = () => {
     }
 
     const ListaCores = () => {
-        fetch(`${import.meta.env.VITE_URL_API_VEICULO}/cores`)
+        fetch(`${urlVeiculo}/cores`)
             .then(response => response.json())
             .then(responseData => {
                 setListaCores(responseData.lista);
@@ -115,19 +115,128 @@ const VeiculoFormulario = () => {
             });
     }
 
+    const GetVeiculo = () => {
+        console.log(urlVeiculo)
+        fetch(`${urlVeiculo}/veiculo_id?codigo=${id}`)
+        .then(response => response.json())
+        .then(responseData => {                       
+            setCodigoMarca(responseData.veiculo.modelo[0].codigo_marca);                       
+            setCodigoModelo(responseData.veiculo.codigo_modelo); 
+            setCodigoCor(responseData.veiculo.cor[0].codigo);
+            setPlaca(responseData.veiculo.placa);
+        })
+        .catch(error => {
+            if (error.message === "Failed to fetch") {
+                // get error message from body or default to response status                    
+                alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
+                return Promise.reject(error);
+            }
+        });
+    }
+
     /** Executando a lista */
     useEffect(() => {
+         
         ListaMarcas();
         ListaCores();
+
+        setTituloPagina('Cadastro de Veículo - Editar Registro')
+        
+        if (id === '' || id === 0 || id == undefined) {
+            setNovoRegistro(true);
+            setTituloPagina('Cadastro de Veículo - Novo Registro')
+            
+        }else{
+            GetVeiculo();
+        }
+        
     }, []);
 
     useEffect(() => {
         if (codigoMarca !== '') {
-            ListaModelos(codigoMarca);
+            ListaModelos();
         }
     }, [codigoMarca])
 
     /** ################# rotina Salvar Registro ###################################################### */
+    /** Atualizar Registro */
+    const atualizarRegistro = () => {
+        
+        const data = new FormData();
+        data.append("codigo_modelo", codigoModelo);
+        data.append("cor_id", codigoCor);
+        data.append("placa", placa);
+        data.append("codigo", id);
+
+        try {
+            fetch(`${urlVeiculo}/veiculo`,
+                {
+                    method: 'PUT',
+                    body: data
+
+                })
+                .then((response) => {
+                    if (response.status === 204) {
+                        handleMensagemComSucesso();
+                    }
+                    else if (response.status === 400) {
+                        handleMensagemComErro('O veiculo já existe registrado!');
+                    }
+                    else {
+                        handleMensagemComErro('');
+
+                    }
+                })
+        }
+        catch (error) {
+            if (error.message === "Failed to fetch") {
+                // get error message from body or default to response status                    
+                alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
+                return Promise.reject(error);
+            }
+            handleMensagemComErro(error);
+        }
+
+    }
+
+    /** novo registro */
+    const GravarNovoRegitro = () => {
+        try {
+            const data = new FormData();
+            data.append("codigo_modelo", codigoModelo);
+            data.append("cor_id", codigoCor);
+            data.append("placa", placa);
+
+            fetch(`${urlVeiculo}/veiculo`,
+                {
+                    method: 'POST',
+                    body: data
+
+                })
+                .then((response) => {
+                    if (response.status === 200) {
+                        handleMensagemComSucesso();
+                    }
+                    else if (response.status === 400) {
+                        handleMensagemComErro('O veiculo já existe registrado!');
+                    }
+                    else {
+                        handleMensagemComErro('');
+
+                    }
+                })
+        } catch (error) {
+            if (error.message === "Failed to fetch") {
+                // get error message from body or default to response status                    
+                alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
+                return Promise.reject(error);
+            }
+            handleMensagemComErro(error);
+        }
+
+    }
+
+    /** Salvar Registro */
     const SalvarRegistro = () => {
 
         if (codigoModelo === 0 || codigoModelo === '') {
@@ -147,67 +256,12 @@ const VeiculoFormulario = () => {
 
         //Utilizando a API
         setSalvando(true);
-        let url = `${import.meta.env.VITE_URL_API_VEICULO}/veiculo`;
 
-        try {
-
-            const data = new FormData();
-            data.append("codigo_modelo", codigoModelo);
-            data.append("cor_id", codigoCor);
-            data.append("placa", placa);
-
-            if (id !== '' || id > 0)
-            {
-                data.append("codigo", id);
-
-                    fetch(url,
-                    {
-                        method: 'PUT',
-                        body: data
-    
-                    })
-                    .then((response) => {
-                        if (response.status === 200) {
-                            handleMensagemComSucesso();
-                        }
-                        else if (response.status === 400) {
-                            handleMensagemComErro('O veiculo já existe registrado!');
-                        }
-                        else {
-                            handleMensagemComErro('');
-    
-                        }
-                    })
-            }
-            else
-            {
-                fetch(url,
-                    {
-                        method: 'POST',
-                        body: data
-    
-                    })
-                    .then((response) => {
-                        if (response.status === 200) {
-                            handleMensagemComSucesso();
-                        }
-                        else if (response.status === 400) {
-                            handleMensagemComErro('O veiculo já existe registrado!');
-                        }
-                        else {
-                            handleMensagemComErro('');
-    
-                        }
-                    })
-            }
-            
-        } catch (error) {
-            if (error.message === "Failed to fetch") {
-                // get error message from body or default to response status                    
-                alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
-                return Promise.reject(error);
-            }
-            handleMensagemComErro(error);
+        if (novoRegistro) {
+            GravarNovoRegitro();
+        }
+        else {
+            atualizarRegistro();
         }
     }
 
@@ -263,7 +317,7 @@ const VeiculoFormulario = () => {
         navigate('/Veiculo');
     }
 
-     
+
 
     /* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Renderizaçã @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
     return (
@@ -272,7 +326,7 @@ const VeiculoFormulario = () => {
             <Box
                 component="div"
             >
-                <TituloPagina titulo="Veículo - Cadastro de Novo Registro" />
+                <TituloPagina titulo= { tituloPaginaCorrente }/>
             </Box>
             <br />
 
@@ -337,7 +391,7 @@ const VeiculoFormulario = () => {
                             ))
                         }
                     </Select>
-                </FormControl>                 
+                </FormControl>
                 &nbsp;
                 <FormControl
                     sx={{ minWidth: 80 }}
@@ -353,7 +407,7 @@ const VeiculoFormulario = () => {
                         inputProps={{
                             maxLength: 7,
                             style: { textTransform: "uppercase" },
-                        }}                        
+                        }}
                         helperText="Digite a placa sem o traço separador"
                     />
                 </FormControl>
