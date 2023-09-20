@@ -21,6 +21,7 @@ import TipoOperacao from './Pages/tipoOperacao/TipoOperacao';
 import TipoOperacaoNovoRegistro from './Pages/tipoOperacao/TipoOperacaoNovoRegistro';
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
 import ListaTipoOperacao from "./components/tipoOperacao/ListaTipoOperacao";
+import OperacaoFormulario from './pages/Operacao/OperacaoFormulario.jsx';
 
 import ErrorPage from "./Pages/ErrorPage";
 
@@ -68,6 +69,14 @@ const router = createBrowserRouter([
           path: "TipoOperacaoEditar/:id",
           element: <TipoOperacaoEditar /> 
         },    
+        {
+          path: "OperacaoFormulario",
+          element: <OperacaoFormulario />
+        },
+        {
+          path: "OperacaoFormulario/:id",
+          element: <OperacaoFormulario />
+        },
         {
           path: "Marca",
           element: <Marca /> 
