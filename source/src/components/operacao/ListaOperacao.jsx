@@ -55,9 +55,10 @@ export default function ListaOperacao() {
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: theme.palette.common.black,
             color: theme.palette.common.white,
+            fontSize:12
         },
         [`&.${tableCellClasses.body}`]: {
-            fontSize: 14,
+            fontSize: 12,
         },
     }));
 
@@ -168,6 +169,7 @@ export default function ListaOperacao() {
                     width: '100%',
                     marginTop: 1,
                     marginBottom: 1
+                    
                 }}
             >
                 <Stack direction="row">
@@ -221,7 +223,7 @@ export default function ListaOperacao() {
                                             {row.data_saida}
                                         </StyledTableCell>
                                         <StyledTableCell align='center'>
-                                            {row.tipo_operacao[0].sigla}
+                                            {`${row.tipo_operacao[0].sigla} - ${row.tipo_operacao[0].descricao}`}
                                         </StyledTableCell>
                                         <StyledTableCell align='center'>
                                             {row.observacao}
