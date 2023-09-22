@@ -14,7 +14,8 @@ import {
     MenuItem,
     Select,
     Snackbar,
-    TextField
+    TextField,
+    Typography
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -39,6 +40,8 @@ const OperacaoFormulario = () => {
     const [disabled, setDisabled] = useState(false);
     const [placa, setPlaca] = useState('');
     const [veiculoCadastroOk, setVeiculoCadastroOk] = useState(false);
+    const [veiculo, setVeiculo] = useState('')
+    const [escondeDadosVeiculo, setEscondeDadosVeiculo] = useState(false);
     const [observacao, setObservacao] = useState('');
     const [value, setValue] = React.useState(dayjs(new Date()));
     const [novoRegistro, setNovoRegistro] = useState(false);
@@ -86,6 +89,7 @@ const OperacaoFormulario = () => {
     const SalvarRegistro = () => {
 
 
+
         //validando se foi escolhido um tipo
         if (codigoTipo === undefined || codigoTipo === 0) {
             handleMensagemComErro('Tipo de Operação inválida!Por favor, verifique.');
@@ -102,45 +106,54 @@ const OperacaoFormulario = () => {
             handleMensagemComErro('Placa inválida!Por favor, verifique.');
             return false;
         }
-        else {
-            setSalvando(true);
 
-            console.log(veiculoCadastroOk)
-            if (veiculoCadastroOk) {
-                alert('Está cadastrado!');
-                setSalvando(false);
-            } else {
-                setOpenDialog(true);
-                setSalvando(false);
-            }
-
+        if (!veiculoCadastroOk) {
+            handleMensagemComErro('Veiculo não cadastrado!Por favor, verifique.');
+            return false;
         }
+        /*  setSalvando(true); */
+        console.log(veiculo);
+        console.log(veiculoCadastroOk)
+
+
         //cadastrando o veiculo
     }
-    async function veiculoCadastrado() {
-        let resultado = await consulta_placa_veiculo_cadastro();
 
-        return resultado.statusCode === 200;
+    const consulta_veiculo = () => {
+
+        let placaPesquisar = placa.toUpperCase().trim();
+        let urlConsulta = `${urlBaseVeiculo}/veiculo_placa?placa=${placaPesquisar}`;
+
+        setVeiculo('');
+        setVeiculoCadastroOk(false);
+        setEscondeDadosVeiculo(true);
+        if (placaPesquisar.length == 7) {
+            fetch(urlConsulta)
+                .then((response) => response.json())
+                .then((responseData) => {
+                    setVeiculo(responseData.veiculo);
+                    setVeiculoCadastroOk(true);
+                    setEscondeDadosVeiculo(false);
+                })
+                .catch(error => {
+
+                    if (error.message === "Failed to fetch") {
+                        // get error message from body or default to response status                    
+                        alert('A comunicação com o serviço de veiculos está com problemas!');
+                        return Promise.reject(error);
+                    }
+
+                });
+
+        }
+
+
     }
 
-    const consulta_placa_veiculo_cadastro = (() => {
-        let urlConsulta = `${urlBaseVeiculo}/veiculo_placa?placa=${placa.toUpperCase().trim()}`;
+    useEffect(() => {
+        consulta_veiculo();
+    }, [placa]);
 
-        return fetch(urlConsulta)
-            .then(response => {
-                const statusCode = response.status;
-                const data = response.json();
-                return Promise.all([statusCode, data]);
-            })
-            .then(res => ({
-                statusCode: res[0],
-                data: res[1]
-            }))
-            .catch(error => {
-                console.error(error);
-                return { name: "network error", description: "" };
-            });
-    });
 
     const handleClose = () => {
 
@@ -189,20 +202,13 @@ const OperacaoFormulario = () => {
 
     };
 
-    const handlePlaca = (e) => {
-        setVeiculoCadastroOk(false);
-        setPlaca(e);
-        if (e.length === 7) {
-            if (veiculoCadastrado()) {
-                setVeiculoCadastroOk(true);
-            }
-        }
-    }
+
     /* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Renderizaçã @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
     return (
         <div>
             <TituloPagina titulo="Operação - Nova entrada no estacionamento" />
             <br />
+            {/* ********************** placa / data / tipo*************** */}
             <Box
                 component='div'
 
@@ -217,7 +223,7 @@ const OperacaoFormulario = () => {
                     label="Placa"
                     labelrequired="*"
                     value={placa}
-                    onChange={e => handlePlaca(e.target.value)}
+                    onChange={(e) => setPlaca(e.target.value)}
                     inputProps={{
                         maxLength: 7,
                         style: { textTransform: "uppercase", fontSize: 14 },
@@ -275,6 +281,52 @@ const OperacaoFormulario = () => {
                 </FormControl>
             </Box>
             <br />
+
+            {/* ********************** dados do veículo *************** */}
+            <Box
+                component="div"
+                hidden={escondeDadosVeiculo}
+            >
+                {/* Placa ***************************************************** */}
+                <TextField
+                    required
+                    id="outlined-read-only-input"
+                    label="Marca"
+                    value={veiculo !== '' || veiculo == undefined ? veiculo.modelo[0].marca[0].nome : ''}
+                    inputProps={{
+                        maxLength: 7,
+                        style: { textTransform: "uppercase", fontSize: 14 },
+                        readOnly: true,
+                    }}
+                />
+
+                <TextField
+                    required
+                    id="outlined-read-only-input"
+                    label="Modelo"
+                    value={veiculo !== '' || veiculo == undefined ? veiculo.modelo[0].nome : ''}
+                    inputProps={{
+                        maxLength: 7,
+                        style: { textTransform: "uppercase", fontSize: 14 },
+                        readOnly: true,
+                    }}
+                />
+                <TextField
+                    required
+                    id="outlined-read-only-input"
+                    label="Cor"
+                    value={veiculo !== '' || veiculo == undefined ? veiculo.cor[0].nome : ''}
+                    inputProps={{
+                        maxLength: 7,
+                        style: { textTransform: "uppercase", fontSize: 14 },
+                        readOnly: true,
+                    }}
+                />
+
+            </Box>
+
+            <br />
+            {/* **********************  Observacao *************** */}
             <div>
                 <FormControl
                     noValidate
@@ -304,8 +356,11 @@ const OperacaoFormulario = () => {
                 </FormControl>
             </div>
 
+
+
             <br />
 
+            {/* ********************** Botões  ******************************** */}
             <Box
                 component='div'
             >
