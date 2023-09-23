@@ -26,7 +26,7 @@ import 'dayjs/locale/pt-br'
 import SaveIcon from '@mui/icons-material/Save';
 import MuiAlert from '@mui/material/Alert';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import ValidadorPlaca from '../../components/Shared/ValidadorPlaca';
 
@@ -38,7 +38,20 @@ const Alert = forwardRef(function Alert(props, ref) {
 });
 
 const OperacaoFormulario = () => {
+
+    /************* variaveis de desativação de botões ********************/
+    /** botão continuar do dialog */
     const [disabled, setDisabled] = useState(false);
+    /** botão salvar do veiculo */
+    const [disabledSalvarVeiculo, setDisabledSalvarVeiculo] = useState(false)
+    /** desativar campos de veiculos para cadastro */
+    const [disabledCamposVeiculo, setDisabledCamposVeiculo] = useState(false)
+
+    /** variavies para controle do dialogo salvar */
+    const [openConfirmaSalvar, setConfirmaSalvar] = useState(false);
+
+    const navigate = useNavigate();
+
     const [placa, setPlaca] = useState('');
     const [veiculoCadastroOk, setVeiculoCadastroOk] = useState(false);
     const [veiculo, setVeiculo] = useState('')
@@ -91,8 +104,21 @@ const OperacaoFormulario = () => {
         setCodigoTipo(event.target.value);
     }
 
-    const SalvarRegistro = () => {
+    /** Rotinas de Salvar Registro  ******************************/
+    /** rotina para desabilitar os botões salvar dialogo e tela principal */
+    const Desabilitar_Botao_Salvar_Dialogo_e_Principal = () => {
+        setDisabled(true);
+        setSalvando(true);
+    }
 
+    /** rotina para habilitar os botões salvar dialogo e tela principal */
+    const Habilitar_Botao_Salvar_Dialogo_e_Principal = () => {
+        setDisabled(false);
+        setSalvando(false);
+    }
+
+    /** Salvar com veiculo pré cadastrado */
+    const SalvarRegistro = () => {
 
         try {
             //validando se foi escolhido um tipo
@@ -114,16 +140,12 @@ const OperacaoFormulario = () => {
 
             if (!veiculoCadastroOk) {
                 setOpenDialog(true);
+                setDisabled(true);
                 return false;
             }
-
-
-            console.log(veiculo);
-            console.log(veiculoCadastroOk)
-
-            setSalvando(true);
-
-
+            
+            handleConfirmacaoSalvar();
+            
 
         } catch {
             setSalvando(false);
@@ -134,6 +156,109 @@ const OperacaoFormulario = () => {
         //cadastrando o veiculo
     }
 
+    /** rotina que faz uso da chamada do serviço de inclusão */
+    const RegistraOperacao = () => {
+        try {
+           
+            Desabilitar_Botao_Salvar_Dialogo_e_Principal();
+            const data = new FormData();
+            data.append("placa_veiculo", placa.toUpperCase().trim());
+            data.append("codigo_tipo_operacao", codigoTipo);
+            data.append("observacao", observacao);
+
+
+            fetch(`${urlBaseOperacao}/operacao`,
+                {
+                    method: 'POST',
+                    body: data
+
+                })
+                .then((response) => {
+                    if (response.status === 200) {
+                        handleMensagemComSucesso();
+                        
+                    }
+                    else if (response.status === 400) {
+                        handleMensagemComErro('O veiculo já existe registrado!');
+                        Habilitar_Botao_Salvar_Dialogo_e_Principal();
+           
+                    }
+                    else {
+                        Habilitar_Botao_Salvar_Dialogo_e_Principal();
+                        handleMensagemComErro('');
+            
+                    }
+                })
+        } catch (error) {
+            if (error.message === "Failed to fetch") {
+                // get error message from body or default to response status                    
+                alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
+                return Promise.reject(error);
+            }
+            handleMensagemComErro(error);
+        }
+    }
+
+    /** Salvar veiculo */
+    const SalvarRegistroVeiculo = () => {
+        /**  valida se existe modelo */
+        if (codigoModelo.length == 0) {
+            handleMensagemComErro('Por favor, informar um modelo de veículo!');
+            return false;
+        }
+
+        /** valida se a cor foi selecionada */
+        if (codigoCor.length == 0) {
+            handleMensagemComErro(`Por favor, informar uma Cor de veículo!`);
+            return false;
+        }
+        /** Salvando o registro via serviço do veiculo */
+        try {
+            
+            const data = new FormData();
+            data.append("codigo_modelo", codigoModelo);
+            data.append("cor_id", codigoCor);
+            data.append("placa", placa.toUpperCase().trim());
+
+            fetch(`${urlBaseVeiculo}/veiculo`,
+                {
+                    method: 'POST',
+                    body: data
+
+                })
+                .then((response) => {
+                    if (response.status === 200) {
+                        handleMensagemComSucessoVeiculo();
+                    }
+                    else if (response.status === 400) {
+                        handleMensagemComErro('O veiculo já existe registrado!');
+                        disabledSalvarVeiculo(false);
+                    }
+                    else {
+
+                        handleMensagemComErro('');
+                        disabledSalvarVeiculo(false);
+                    }
+                })
+        } catch (error) {
+            if (error.message === "Failed to fetch") {
+                // get error message from body or default to response status                    
+                alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
+                return Promise.reject(error);
+            }
+            handleMensagemComErro(error);
+        }
+    }
+
+    const handleConfirmacaoSalvar =()=>{
+        setConfirmaSalvar(true);
+    }
+
+    const handleSalvarRegistro = () => {
+        
+        RegistraOperacao();
+
+    }
     const consulta_veiculo = () => {
 
         let placaPesquisar = placa.toUpperCase().trim();
@@ -183,8 +308,9 @@ const OperacaoFormulario = () => {
     }
 
     const ListaModelos = () => {
+        setCodigoModelo('');
         if (codigoMarca > 0) {
-            fetch(`${urlVeiculo}/marca_modelo_id?codigo_marca=${codigoMarca}`)
+            fetch(`${urlBaseVeiculo}/marca_modelo_id?codigo_marca=${codigoMarca}`)
                 .then(response => response.json())
                 .then(responseData => {
 
@@ -249,7 +375,13 @@ const OperacaoFormulario = () => {
 
     const handleCloseDialog = () => {
         setOpenDialog(false);
+        consulta_veiculo();
     };
+
+    const handleCloseDialogConfirmar = () => {
+        RegistraOperacao();
+
+    }
 
     const handleCloseMensagemSucesso = (event, reason) => {
         if (reason === 'clickaway') {
@@ -267,7 +399,7 @@ const OperacaoFormulario = () => {
 
     };
 
-    const handleMensagemComErro = (erro) => {
+    function handleMensagemComErro(erro) {
         setMensagemComErro(true);
         setMensagemErroTexto(erro);
 
@@ -278,16 +410,40 @@ const OperacaoFormulario = () => {
 
     const handleMensagemComSucesso = () => {
         setMensagemComSucesso(true);
-
-
         setTimeout(() => {
-            setSalvando(false);
+            Habilitar_Botao_Salvar_Dialogo_e_Principal();
             handleClose();
-
+            redirecionar();
         }, 4000);
 
     };
 
+    /** metodos do dialogo */
+    /** marca */
+    const handleChangeMarca = (event) => {
+        setCodigoMarca(event.target.value)
+    }
+
+    /** modelo */
+    const handleChangeModelo = (event) => {
+        setCodigoModelo(event.target.value);
+    }
+
+    /** cor */
+    const handleChangeCor = (event) => {
+        setCodigoCor(event.target.value);
+    }
+
+    const handleMensagemComSucessoVeiculo = () => {
+        setMensagemComSucesso(true);
+        setDisabledSalvarVeiculo(true);
+        setDisabled(false);
+        setDisabledCamposVeiculo(true); 
+    };
+
+    const redirecionar = () => {
+        navigate('/Registro');
+    }
 
     /* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Renderizaçã @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
     return (
@@ -448,7 +604,7 @@ const OperacaoFormulario = () => {
                         value={observacao}
                         onChange={e => setObservacao(e.target.value)}
                         inputProps={{
-                            maxLength: 7,
+                            maxLength: 300,
                             width: 600,
                             style: { textTransform: "uppercase", fontSize: 12 },
 
@@ -460,11 +616,7 @@ const OperacaoFormulario = () => {
 
                 </FormControl>
             </div>
-
-
-
             <br />
-
             {/* ********************** Botões  ******************************** */}
             <Box
                 component='div'
@@ -481,8 +633,6 @@ const OperacaoFormulario = () => {
                 &nbsp;
                 <BotaoVoltar disabled={salvando} />
             </Box>
-
-
 
             {/* ********************** mensagem com sucesso *************** */}
             <Snackbar open={mostrar_mensagem_sucesso} autoHideDuration={3000} onClose={handleCloseMensagemSucesso}
@@ -504,8 +654,6 @@ const OperacaoFormulario = () => {
                 <Alert onClose={handleCloseMensagemComErro} severity="error" sx={{ width: '100%' }}>Ocorreu o erro: <b> {mensagemErroTexto} </b></Alert>
             </Snackbar>
 
-
-
             {/* Dialog cadastro veiculo ********************************************************************************** */}
             <Box
                 component="div"
@@ -515,11 +663,12 @@ const OperacaoFormulario = () => {
                     onClose={handleCloseDialog}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
-                    fullWidth={false}
-                    maxWidth={'xl'}
+
+                    maxWidth={'lg'}
 
                 >
                     <DialogTitle id="alert-dialog-title"
+                        fullWidth={true}
                         sx={{
                             bgcolor: '#1976d2',
                             color: 'white',
@@ -528,33 +677,43 @@ const OperacaoFormulario = () => {
                             p: 2,
                             minWidth: 600,
                             height: 15,
-                            width: 1000,
-                            fontSize: 14,
+                            fontSize: 18,
 
                         }}
                     >
                         Operação - Cadastrar - Validação da placa do veículo
                     </DialogTitle>
-                    <DialogContent>
+                    <DialogContent sx={{ textAlign: 'center' }}>
                         <DialogContentText id="alert-dialog-description"
                             sx={{
                                 bgcolor: '#white',
                                 color: 'black',
-                                fontSize: 14,
+                                fontSize: 16,
                                 textAlign: 'left'
                             }}
                         >
-                            Atenção! Não existe veículo cadastrado com esta <b> [ {placa.toUpperCase().trim()} ]</b>! Deseja cadastrar?
+                            <br />
+                            <Box
+                                component="div"
+                                sx={{ backgroundColor: 'ButtonHighlight', color: 'black', marginLeft: '5', textAlign: 'center', marginTop: '5' }}
+                                fullWidth={true}
+                            >
+                                Atenção! Não existe veículo cadastrado com esta <b> [ {placa.toUpperCase().trim()} ]</b>!
+                                <br />
+                                Deseja cadastrar? Preencha as informações e clique no botão Salvar.
+                            </Box>
+
                         </DialogContentText>
                         <br />
                         <Container
                             maxWidth="xl"
+                            fullWidth={true}
                         >
                             <Box
                                 component="div"
-                                sx={{ bgcolor: '#cfe8fc' }}
+                            /*   sx={{ bgcolor: '#cfe8fc' }} */
                             >
-
+                                {/** ************** Marcas do veiculo *****************/}
                                 <FormControl sx={{ minWidth: 200 }} noValidate
                                     autoComplete="off">
 
@@ -566,6 +725,7 @@ const OperacaoFormulario = () => {
                                         value={codigoMarca}
                                         label="Marca"
                                         onChange={(e) => handleChangeMarca(e)}
+                                        disabled={disabledCamposVeiculo}
                                     >
                                         <MenuItem value={0} key={'ma0'} >Selecione um da lista</MenuItem>
                                         {
@@ -580,7 +740,8 @@ const OperacaoFormulario = () => {
                                     </Select>
                                 </FormControl>
                                 &nbsp;
-                                <FormControl sx={{ minWidth: 200 }}>
+                                {/** ************** Modelo do veiculo *****************/}
+                                <FormControl sx={{ minWidth: 500 }}>
                                     <InputLabel id="lblSelectModelo" required>Modelo</InputLabel>
                                     <Select
 
@@ -589,6 +750,7 @@ const OperacaoFormulario = () => {
                                         value={codigoModelo}
                                         label="Modelo"
                                         onChange={(e) => handleChangeModelo(e)}
+                                        disabled={disabledCamposVeiculo}
                                     >
                                         <MenuItem value={''} key={'mo0'} >Selecione um da lista</MenuItem>
                                         {
@@ -600,7 +762,8 @@ const OperacaoFormulario = () => {
                                     </Select>
                                 </FormControl>
                                 &nbsp;
-                                <FormControl sx={{ minWidth: 200 }}>
+                                {/** ************** cores do veiculo *****************/}
+                                <FormControl sx={{ minWidth: 250 }}>
                                     <InputLabel id="lblSelectCores" required>Cor</InputLabel>
                                     <Select
                                         labelId="lblSelectCores"
@@ -608,6 +771,7 @@ const OperacaoFormulario = () => {
                                         value={codigoCor}
                                         label="Cor"
                                         onChange={(e) => handleChangeCor(e)}
+                                        disabled={disabledCamposVeiculo}
                                         required
                                     >
                                         <MenuItem value={''} key={'c0'} >Selecione um da lista</MenuItem>
@@ -618,14 +782,92 @@ const OperacaoFormulario = () => {
                                         }
                                     </Select>
                                 </FormControl>
+
+                            </Box>
+                            <br />
+                            {/** ************** Botão Salvar veiculo *****************/}
+                            <Box component="div">
+                                <FormControl fullWidth>
+                                    <Button variant="contained"
+                                        color="primary"
+                                        disabled={disabledSalvarVeiculo}
+                                        onClick={SalvarRegistroVeiculo}>
+                                        Salvar
+                                    </Button>
+                                </FormControl>
                             </Box>
                         </Container>
                     </DialogContent>
-                    <DialogActions>
-                        <Button variant="contained" color="primary">
-                            <Link style={{ textDecoration: "none", color: "white" }} to={`/VeiculoFormulario`}>Cadastrar</Link>
+                    <DialogActions sx={{ textAlign: 'center' }}>
+                        <Button variant="contained" color="primary" disabled={disabled} onClick={handleConfirmacaoSalvar}>
+                            Continuar
                         </Button>
-                        <Button variant="contained" color={'error'} onClick={handleCloseDialog} autoFocus>Desistir</Button>
+                        <Button variant="contained" color={'error'} onClick={handleCloseDialogConfirmar} autoFocus>Desistir</Button>
+                    </DialogActions>
+                </Dialog>
+            </Box>
+
+            {/* Dialog confirma salvar ********************************************************************************** */}
+            <Box
+                component="div"
+            >
+                <Dialog
+                    open={openConfirmaSalvar}
+                    onClose={handleCloseDialogConfirmar}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+
+                    maxWidth={'lg'}
+
+                >
+                    <DialogTitle id="alert-dialog-title"
+                        fullWidth={true}
+                        sx={{
+                            bgcolor: '#1976d2',
+                            color: 'white',
+                            /* boxShadow: 1,
+                            borderRadius: 2, */
+                            p: 2,
+                            minWidth: 600,
+                            height: 15,
+                            fontSize: 18,
+
+                        }}
+                    >
+                        Operação - Novo Registro - Confirmar
+                    </DialogTitle>
+                    <DialogContent sx={{ textAlign: 'center' }}>
+                        <DialogContentText id="alert-dialog-description"
+                            sx={{
+                                bgcolor: '#white',
+                                color: 'black',
+                                fontSize: 16,
+                                textAlign: 'left'
+                            }}
+                        >
+                            <br />
+                            <Box
+                                component="div"
+                                sx={{
+                                    backgroundColor: 'ButtonHighlight',
+                                    color: 'black',
+                                    marginLeft: '5',
+                                    textAlign: 'left',
+                                    marginTop: '5'
+                                }}
+                                fullWidth={true}
+                            >
+                                Tem certeza que deseja continuar?
+                            </Box>
+
+                        </DialogContentText>
+                        <br />
+                    </DialogContent>
+                    <DialogActions sx={{ textAlign: 'center' }}>
+                        <Button variant="contained" color="primary" disabled={disabled} onClick={handleSalvarRegistro}>
+                            Sim
+                        </Button>
+                        <Button variant="contained" color={'error'} onClick={handleCloseDialogConfirmar} autoFocus>Não</Button>
                     </DialogActions>
                 </Dialog>
             </Box>
