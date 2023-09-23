@@ -44,7 +44,7 @@ class TempoApp extends Component {
     }
     else {
       return (
-        <Item>          
+        <div>          
           <table>
             <tbody>
               <tr>
@@ -54,16 +54,18 @@ class TempoApp extends Component {
               <tr>
                 <td colSpan="2">
                   Temperature: {this.state.temp} °C
+                  <br/>
+                  Descrição: {this.state.desc}
                 </td>
               </tr>
               <tr>
                 <td colSpan="2">
-                  Descrição: {this.state.desc}
+                  
                 </td>
               </tr>
             </tbody>
           </table>          
-        </Item>
+        </div>
       );
     }
   }

@@ -17,7 +17,7 @@ import {Link} from 'react-router-dom';
 const pages = [
                   {nome :'Registro', rota : 'Registro'},
                   {nome :'Veículo', rota : 'Veiculo'},
-                  {nome :'Tipo Operação', rota: 'TipoOperacao'},
+                  /* {nome :'Tipo Operação', rota: 'TipoOperacao'}, */
                   {nome :'Marca',rota:'Marca'},
                   {nome :'Modelo',rota:'Modelo'}
                ];

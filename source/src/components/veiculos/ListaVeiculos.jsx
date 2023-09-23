@@ -34,7 +34,7 @@ export default function ListaVeiculos() {
 
     const [veiculos, setVeiculos] = useState([]);
     const [placa, setPlaca] = useState('');
-    const [codigo, setCodigo] = useState(0);   
+    const [codigo, setCodigo] = useState(0);
 
     const [quantidadeOperacoes, setQuantidadeOperacoes] = useState(0);
     const [consultadoOperacao, setConsultadoOperacao] = useState(false);
@@ -88,11 +88,11 @@ export default function ListaVeiculos() {
         if (reason === 'clickaway') {
             return;
         }
-        
-        
+
+
         setTimeout(() => {
             setMensagemComErro(false);
-            
+
         }, 2000);
 
     };
@@ -103,7 +103,7 @@ export default function ListaVeiculos() {
             if (consulta_operacoes() && consultadoOperacao) {
                 if (quantidadeOperacoes > 0) {
                     handleMensagemComErro(`Existe [ ${quantidadeOperacoes} ] Operações registradas com este veículo!`);
-                   
+
                     return false;
                 }
                 const data = new FormData();
@@ -122,7 +122,7 @@ export default function ListaVeiculos() {
                             handleMensagemComSucesso();
                         }
                     })
-            }else{
+            } else {
                 handleMensagemComErro(`Não é possível excluir! O serviço de Operações não está funcionando!`);
             }
 
@@ -132,7 +132,7 @@ export default function ListaVeiculos() {
                 handleMensagemComErro(error);
                 return Promise.reject(error);
             }
-           
+
         }
     }
 
@@ -179,12 +179,12 @@ export default function ListaVeiculos() {
             })
             .catch(error => {
                 console.error(error);
-                if (error.message === "Failed to fetch") {                                        
+                if (error.message === "Failed to fetch") {
                     setConsultadoOperacao(false);
                 }
             });
 
-        return quantidadeOperacoes == null?false: consultadoOperacao;
+        return quantidadeOperacoes == null ? false : consultadoOperacao;
     }
 
     return (
@@ -254,24 +254,17 @@ export default function ListaVeiculos() {
                                             {row.placa}
                                         </StyledTableCell>
                                         <StyledTableCell align="center" >
-                                            <table>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
 
-                                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/VeiculoFormulario/${row.codigo}`}>Editar</Link>
+                                            <Button sx={{ fontSize: 11 }} variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
 
-                                                            </Button>
-                                                        </td>
-                                                        <td>
-                                                            <Button variant="contained" size="small" endIcon={<DeleteIcon />} color='error' onClick={() => AbrirModalExcluir(row)}>
-                                                                Excluir
-                                                            </Button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/VeiculoFormulario/${row.codigo}`}>Editar</Link>
+
+                                            </Button>
+                                            &nbsp;
+                                            <Button sx={{ fontSize: 11 }} variant="contained" size="small" endIcon={<DeleteIcon />} color='error' onClick={() => AbrirModalExcluir(row)}>
+                                                Excluir
+                                            </Button>
+
                                         </StyledTableCell>
                                     </StyledTableRow>
                                 )

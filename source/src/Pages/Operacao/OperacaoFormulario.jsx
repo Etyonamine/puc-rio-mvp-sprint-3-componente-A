@@ -51,7 +51,7 @@ const OperacaoFormulario = () => {
     const [openConfirmaSalvar, setConfirmaSalvar] = useState(false);
 
     const navigate = useNavigate();
-    
+    const [veiculoEmAberto,setVeiculoEmAberto] = useState(false);
     const [placa, setPlaca] = useState('');
     const [veiculoCadastroOk, setVeiculoCadastroOk] = useState(false);
     const [veiculo, setVeiculo] = useState('')
@@ -137,6 +137,7 @@ const OperacaoFormulario = () => {
     const SalvarRegistro = () => {
 
         try {
+            
             //validando se foi escolhido um tipo
             if (codigoTipo === undefined || codigoTipo === 0) {
                 handleMensagemComErro('Tipo de Operação inválida!Por favor, verifique.');
@@ -154,7 +155,11 @@ const OperacaoFormulario = () => {
                     handleMensagemComErro('Placa inválida!Por favor, verifique.');
                     return false;
                 }
-
+                pesquisaVeiculoAberto();
+                if (veiculoEmAberto){
+                    handleMensagemComErro('Existe uma operação com este veículo em ABERTO!Por favor, verifique.');
+                    return false;
+                }
                 if (!veiculoCadastroOk) {
                     setOpenDialog(true);
                     setTimeout(() => {
@@ -266,7 +271,8 @@ const OperacaoFormulario = () => {
 
     /** Salvar veiculo */
     const SalvarRegistroVeiculo = () => {
-        /**  valida se existe modelo */
+        /**  valida se existe modelo */       
+
         if (codigoModelo.length == 0) {
             handleMensagemComErro('Por favor, informar um modelo de veículo!');
             return false;
@@ -457,6 +463,24 @@ const OperacaoFormulario = () => {
         handleCloseMensagemComErro();
         handleCloseMensagemSucesso();
     };
+
+    /** pesquisar se existe veiculo em aberto */
+    const pesquisaVeiculoAberto =() => {
+        let urlpesquisa = `${urlBaseOperacao}/operacao_veiculo_id?placa=${placa}`;
+        setVeiculoEmAberto(false);
+        fetch(urlpesquisa)
+            .then(response=>response.json())
+            .then(data=>{
+                if (data.veiculo.data_saida == null){
+                    setVeiculoEmAberto(true);
+                }
+            })
+            .catch(error=>{
+                console.log(error);
+                handleMensagemComErro('Erro na pesquisa do veiculo na base de operação!')
+                setVeiculoEmAberto(false);
+            });        
+    }
 
     /** fecha dialogo do cadastro de veiculo */
     const handleCloseDialog = () => {

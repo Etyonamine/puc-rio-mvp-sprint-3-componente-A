@@ -76,7 +76,7 @@ const ListaMarcas = () => {
             fetch(`${import.meta.env.VITE_URL_API_VEICULO}/marca`,
                 {
                     method: 'DELETE',
-                    body: data                     
+                    body: data
                 })
                 .then((response) => {
                     if (response.status === 204) {
@@ -84,12 +84,11 @@ const ListaMarcas = () => {
                     }
                 })
         } catch (error) {
-            if (error.message === "Failed to fetch")
-                {
-                     // get error message from body or default to response status                    
-                     alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
-                     return Promise.reject(error);
-                } 
+            if (error.message === "Failed to fetch") {
+                // get error message from body or default to response status                    
+                alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
+                return Promise.reject(error);
+            }
             handleMensagemComErro(error);
         }
     }
@@ -102,12 +101,11 @@ const ListaMarcas = () => {
 
             })
             .catch(error => {
-                if (error.message === "Failed to fetch")
-                {
-                     // get error message from body or default to response status                    
-                     alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
-                     return Promise.reject(error);
-                }                 
+                if (error.message === "Failed to fetch") {
+                    // get error message from body or default to response status                    
+                    alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
+                    return Promise.reject(error);
+                }
             });
     }
 
@@ -227,24 +225,16 @@ const ListaMarcas = () => {
                                             {row.nome}
                                         </StyledTableCell>
                                         <StyledTableCell align="center" >
-                                            <table>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
 
-                                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/MarcaEditarRegistro/${row.codigo}`}>Editar</Link>
+                                            <Button sx={{fontSize: 11}} variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
 
-                                                            </Button>
-                                                        </td>
-                                                        <td>
-                                                            <Button variant="contained" size="small" endIcon={<DeleteIcon />} color='error' onClick={() => AbrirModalExcluir(row)}>
-                                                                Excluir
-                                                            </Button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/MarcaEditarRegistro/${row.codigo}`}>Editar</Link>
+
+                                            </Button>
+                                            &nbsp;
+                                            <Button sx={{fontSize: 11}} variant="contained" size="small" endIcon={<DeleteIcon />} color='error' onClick={() => AbrirModalExcluir(row)}>
+                                                Excluir
+                                            </Button>
                                         </StyledTableCell>
                                     </StyledTableRow>
                                 )
