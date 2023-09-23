@@ -22,6 +22,7 @@ import TipoOperacaoNovoRegistro from './Pages/tipoOperacao/TipoOperacaoNovoRegis
 import TipoOperacaoEditar from "./components/tipoOperacao/TipoOperacaoFormEditar";
 import ListaTipoOperacao from "./components/tipoOperacao/ListaTipoOperacao";
 import OperacaoFormulario from './pages/Operacao/OperacaoFormulario.jsx';
+import OperacaoSaida from './pages/Operacao/OperacaoSaida.jsx';
 
 import ErrorPage from "./Pages/ErrorPage";
 
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
         {
           path: "OperacaoFormulario/:id",
           element: <OperacaoFormulario />
+        },
+        {
+          path: "OperacaoSaida/:id",
+          element: <OperacaoSaida />
         },
         {
           path: "Marca",

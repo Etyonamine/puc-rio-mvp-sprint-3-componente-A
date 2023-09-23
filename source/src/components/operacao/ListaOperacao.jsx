@@ -36,7 +36,7 @@ export default function ListaOperacao() {
     const [operacoes, setOperacoes] = useState([]);
     const [placa, setPlaca] = useState('');
     const [codigo, setCodigo] = useState(0);
-   
+    
 
     const [open, setOpen] = React.useState(false);
     const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
@@ -47,6 +47,8 @@ export default function ListaOperacao() {
     const urlVeiculoBase = `${import.meta.env.VITE_URL_API_VEICULO}`;
     useEffect(() => {
         getLista();
+       
+      
 
     }, []);
 
@@ -145,7 +147,9 @@ export default function ListaOperacao() {
     const getLista = () => {
         fetch(`${urlOperacaoBase}/operacoes`)
             .then(response => response.json())
-            .then(responseData => setOperacoes(responseData.lista))
+            .then(responseData => {                
+                setOperacoes(responseData.lista);                
+            })
             .catch(error => {
                 if (error.message === "Failed to fetch") {
                     // get error message from body or default to response status                    
@@ -196,7 +200,9 @@ export default function ListaOperacao() {
                         </TableHead>
 
                         <TableBody >
-                            {
+                            
+                            { 
+                                
                                 operacoes.map((row) => (
                                     <StyledTableRow
                                         key={row.codigo}
@@ -230,14 +236,12 @@ export default function ListaOperacao() {
                                                     <tr>
                                                         <td>
                                                             <Button variant="contained" sx={{ fontSize: 11}} color="primary" size="small" endIcon={<EditIcon />}>
-
                                                                 <Link  style={{ textDecoration: "none", color: "white" }} to={`/OperacaoFormulario/${row.codigo}`}>Editar</Link>
-
                                                             </Button>
                                                         </td>
                                                         <td>
-                                                            <Button sx={{ fontSize: 11}} variant="contained" size="small"   endIcon={<ExitIcon />} color='success' onClick={() => AbrirModalExcluir(row)}>
-                                                                Saída
+                                                            <Button sx={{ fontSize: 11}} variant="contained" size="small"   endIcon={<ExitIcon />} color='success'  >                                                                                                                                
+                                                                <Link  style={{ textDecoration: "none", color: "white" }} to={`/OperacaoSaida/${row.codigo}`}>Saída</Link>
                                                             </Button>
                                                         </td>
                                                         <td>
