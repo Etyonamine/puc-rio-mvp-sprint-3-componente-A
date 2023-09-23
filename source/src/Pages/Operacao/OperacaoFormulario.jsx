@@ -4,6 +4,7 @@ import BotaoVoltar from '../../components/Botoes/BotaoRetornar';
 import {
     Box,
     Button,
+    Container,
     Dialog,
     DialogActions,
     DialogContent,
@@ -57,7 +58,15 @@ const OperacaoFormulario = () => {
     const [mostrar_mensagem_com_erro, setMensagemComErro] = useState(false);
     const [mensagemErroTexto, setMensagemErroTexto] = React.useState('');
 
+    /** variaveis dos combos - novo veiculo */
+    const [codigoMarca, setCodigoMarca] = useState(0)
+    const [marcasEncontradas, setListaMarcas] = useState([]);
+    const [codigoModelo, setCodigoModelo] = useState('')
+    const [modelosEncontrados, setListaModelo] = useState([]);
+    const [codigoCor, setCodigoCor] = useState('');
+    const [coresEncontradas, setListaCores] = useState([{ cor: null }]);
 
+    /** urls de serviços */
     const urlBaseOperacao = `${import.meta.env.VITE_URL_API_OPERACAO}`;
     const urlBaseVeiculo = `${import.meta.env.VITE_URL_API_VEICULO}`;
 
@@ -78,10 +87,6 @@ const OperacaoFormulario = () => {
         return resp;
     }
 
-    useEffect(() => {
-        ListaTipos();
-    }, []);
-
     const HandleTipo = (event) => {
         setCodigoTipo(event.target.value);
     }
@@ -89,31 +94,41 @@ const OperacaoFormulario = () => {
     const SalvarRegistro = () => {
 
 
+        try {
+            //validando se foi escolhido um tipo
+            if (codigoTipo === undefined || codigoTipo === 0) {
+                handleMensagemComErro('Tipo de Operação inválida!Por favor, verifique.');
+                return false;
+            }
+            //validando a data
+            if (!Date.parse(value.toString())) {
+                handleMensagemComErro('Data e Hora de entrada inválida!Por favor, verifique.');
+                return false;
+            }
 
-        //validando se foi escolhido um tipo
-        if (codigoTipo === undefined || codigoTipo === 0) {
-            handleMensagemComErro('Tipo de Operação inválida!Por favor, verifique.');
-            return false;
-        }
-        //validando a data
-        if (!Date.parse(value.toString())) {
-            handleMensagemComErro('Data e Hora de entrada inválida!Por favor, verifique.');
-            return false;
+            //validando a placa do veiculo
+            if (!ValidadorPlaca(placa)) {
+                handleMensagemComErro('Placa inválida!Por favor, verifique.');
+                return false;
+            }
+
+            if (!veiculoCadastroOk) {
+                setOpenDialog(true);
+                return false;
+            }
+
+
+            console.log(veiculo);
+            console.log(veiculoCadastroOk)
+
+            setSalvando(true);
+
+
+
+        } catch {
+            setSalvando(false);
         }
 
-        //validando a placa do veiculo
-        if (!ValidadorPlaca(placa)) {
-            handleMensagemComErro('Placa inválida!Por favor, verifique.');
-            return false;
-        }
-
-        if (!veiculoCadastroOk) {
-            handleMensagemComErro('Veiculo não cadastrado!Por favor, verifique.');
-            return false;
-        }
-        /*  setSalvando(true); */
-        console.log(veiculo);
-        console.log(veiculoCadastroOk)
 
 
         //cadastrando o veiculo
@@ -150,10 +165,81 @@ const OperacaoFormulario = () => {
 
     }
 
+    /** consultas  *****************************************/
+    const ListaMarcas = () => {
+        fetch(`${urlBaseVeiculo}/marcas`)
+            .then(response => response.json())
+            .then(responseData => {
+                setListaMarcas(responseData.lista);
+
+            })
+            .catch(error => {
+                if (error.message === "Failed to fetch") {
+                    // get error message from body or default to response status                    
+                    alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
+                    return Promise.reject(error);
+                }
+            });
+    }
+
+    const ListaModelos = () => {
+        if (codigoMarca > 0) {
+            fetch(`${urlVeiculo}/marca_modelo_id?codigo_marca=${codigoMarca}`)
+                .then(response => response.json())
+                .then(responseData => {
+
+                    if (responseData.lista.length > 0) {
+                        setListaModelo(responseData.lista);
+                    }
+
+
+                })
+                .catch(error => {
+                    if (error.message === "Failed to fetch") {
+                        // get error message from body or default to response status                    
+                        alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
+                        return Promise.reject(error);
+                    }
+                });
+
+        }
+
+    }
+
+    const ListaCores = () => {
+        fetch(`${urlBaseVeiculo}/cores`)
+            .then(response => response.json())
+            .then(responseData => {
+                setListaCores(responseData.lista);
+
+            })
+            .catch(error => {
+                if (error.message === "Failed to fetch") {
+                    // get error message from body or default to response status                    
+                    alert('A comunicação com os serviços de Marcas de Veículos está com problemas!');
+                    return Promise.reject(error);
+                }
+            });
+    }
+
+    /** veiculo */
     useEffect(() => {
         consulta_veiculo();
     }, [placa]);
 
+    /** tipos /marcas / cores */
+    useEffect(() => {
+        ListaTipos();
+        ListaMarcas();
+        ListaCores();
+    }, []);
+
+    //modelos conforme marca
+    useEffect(() => {
+
+        ListaModelos();
+
+    }, [codigoMarca])
 
     const handleClose = () => {
 
@@ -283,48 +369,67 @@ const OperacaoFormulario = () => {
             <br />
 
             {/* ********************** dados do veículo *************** */}
-            <Box
-                component="div"
-                hidden={escondeDadosVeiculo}
-            >
-                {/* Placa ***************************************************** */}
-                <TextField
-                    required
-                    id="outlined-read-only-input"
-                    label="Marca"
-                    value={veiculo !== '' || veiculo == undefined ? veiculo.modelo[0].marca[0].nome : ''}
-                    inputProps={{
-                        maxLength: 7,
-                        style: { textTransform: "uppercase", fontSize: 14 },
-                        readOnly: true,
-                    }}
-                />
+            <Container maxWidth="xl">
+                <Box
+                    component="div"
+                    hidden={escondeDadosVeiculo}
+                    sx={{ bgcolor: '#cfe8fc' }}
+                >
+                    <Typography>
+                        <b>Informações do Veículo</b>
+                    </Typography>
+                    {/* Placa ***************************************************** */}
+                    <FormControl
+                        sx={{ width: 300 }}
+                    >
+                        <TextField
+                            required
+                            id="outlined-read-only-input"
+                            label="Marca"
+                            value={veiculo !== '' || veiculo == undefined ? veiculo.modelo[0].marca[0].nome : ''}
+                            inputProps={{
+                                maxLength: 7,
+                                style: { textTransform: "uppercase", fontSize: 14 },
+                                readOnly: true,
+                            }}
+                        />
+                    </FormControl>
+                    &nbsp;
+                    <FormControl
+                        sx={{ width: 300 }}
+                    >
+                        <TextField
+                            required
+                            id="outlined-read-only-input"
+                            label="Modelo"
+                            value={veiculo !== '' || veiculo == undefined ? veiculo.modelo[0].nome : ''}
+                            inputProps={{
+                                maxLength: 7,
+                                style: { textTransform: "uppercase", fontSize: 14 },
+                                readOnly: true,
+                            }}
+                        />
+                    </FormControl>
+                    &nbsp;
+                    <FormControl
+                        sx={{ width: 300 }}
+                    >
+                        <TextField
+                            required
+                            id="outlined-read-only-input"
+                            label="Cor"
+                            value={veiculo !== '' || veiculo == undefined ? veiculo.cor[0].nome : ''}
+                            inputProps={{
+                                maxLength: 7,
+                                style: { textTransform: "uppercase", fontSize: 14 },
+                                readOnly: true,
+                            }}
+                        />
+                    </FormControl>
 
-                <TextField
-                    required
-                    id="outlined-read-only-input"
-                    label="Modelo"
-                    value={veiculo !== '' || veiculo == undefined ? veiculo.modelo[0].nome : ''}
-                    inputProps={{
-                        maxLength: 7,
-                        style: { textTransform: "uppercase", fontSize: 14 },
-                        readOnly: true,
-                    }}
-                />
-                <TextField
-                    required
-                    id="outlined-read-only-input"
-                    label="Cor"
-                    value={veiculo !== '' || veiculo == undefined ? veiculo.cor[0].nome : ''}
-                    inputProps={{
-                        maxLength: 7,
-                        style: { textTransform: "uppercase", fontSize: 14 },
-                        readOnly: true,
-                    }}
-                />
 
-            </Box>
-
+                </Box>
+            </Container>
             <br />
             {/* **********************  Observacao *************** */}
             <div>
@@ -410,6 +515,8 @@ const OperacaoFormulario = () => {
                     onClose={handleCloseDialog}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
+                    fullWidth={false}
+                    maxWidth={'xl'}
 
                 >
                     <DialogTitle id="alert-dialog-title"
@@ -419,9 +526,9 @@ const OperacaoFormulario = () => {
                             /* boxShadow: 1,
                             borderRadius: 2, */
                             p: 2,
-                            minWidth: 568,
-                            height: 5,
-                            width: 568,
+                            minWidth: 600,
+                            height: 15,
+                            width: 1000,
                             fontSize: 14,
 
                         }}
@@ -439,6 +546,80 @@ const OperacaoFormulario = () => {
                         >
                             Atenção! Não existe veículo cadastrado com esta <b> [ {placa.toUpperCase().trim()} ]</b>! Deseja cadastrar?
                         </DialogContentText>
+                        <br />
+                        <Container
+                            maxWidth="xl"
+                        >
+                            <Box
+                                component="div"
+                                sx={{ bgcolor: '#cfe8fc' }}
+                            >
+
+                                <FormControl sx={{ minWidth: 200 }} noValidate
+                                    autoComplete="off">
+
+                                    <InputLabel id="lblSelectMarca" required>Marca</InputLabel>
+                                    <Select
+
+                                        labelId="lblSelectMarca"
+                                        id="marcas_select"
+                                        value={codigoMarca}
+                                        label="Marca"
+                                        onChange={(e) => handleChangeMarca(e)}
+                                    >
+                                        <MenuItem value={0} key={'ma0'} >Selecione um da lista</MenuItem>
+                                        {
+
+                                            marcasEncontradas.map((row) => (
+                                                <MenuItem value={row.codigo} key={`ma${row.codigo}`} >{row.nome}</MenuItem>
+                                            ))
+
+                                        }
+
+
+                                    </Select>
+                                </FormControl>
+                                &nbsp;
+                                <FormControl sx={{ minWidth: 200 }}>
+                                    <InputLabel id="lblSelectModelo" required>Modelo</InputLabel>
+                                    <Select
+
+                                        labelId="lblSelectModelo"
+                                        id="modelos_select"
+                                        value={codigoModelo}
+                                        label="Modelo"
+                                        onChange={(e) => handleChangeModelo(e)}
+                                    >
+                                        <MenuItem value={''} key={'mo0'} >Selecione um da lista</MenuItem>
+                                        {
+                                            modelosEncontrados.map((row) => (
+                                                <MenuItem value={row.codigo} key={row.codigo} >{row.nome}</MenuItem>
+                                            ))
+                                        }
+
+                                    </Select>
+                                </FormControl>
+                                &nbsp;
+                                <FormControl sx={{ minWidth: 200 }}>
+                                    <InputLabel id="lblSelectCores" required>Cor</InputLabel>
+                                    <Select
+                                        labelId="lblSelectCores"
+                                        id="cores_select"
+                                        value={codigoCor}
+                                        label="Cor"
+                                        onChange={(e) => handleChangeCor(e)}
+                                        required
+                                    >
+                                        <MenuItem value={''} key={'c0'} >Selecione um da lista</MenuItem>
+                                        {
+                                            coresEncontradas.map((row) => (
+                                                <MenuItem value={row.codigo} key={`co${row.codigo}`} >{row.nome}</MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </Container>
                     </DialogContent>
                     <DialogActions>
                         <Button variant="contained" color="primary">
