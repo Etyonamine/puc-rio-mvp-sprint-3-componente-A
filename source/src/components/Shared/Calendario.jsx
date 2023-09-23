@@ -8,7 +8,7 @@ export default function BasicDateCalendar() {
   
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='pt-br'>
-      <DateCalendar />
+      <DateCalendar sx={{ width:'95%'}}/>
     </LocalizationProvider>
   );
 }

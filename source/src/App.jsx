@@ -15,11 +15,11 @@ function App() {
             <TituloPrincipal />
             <Navbar />
           </Grid>
-          <Grid item xs={3}> 
+          <Grid item xs={2}> 
             <TempoApp />
             <DateCalendarValue />
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={10}>
             <Outlet />
           </Grid>
         </Grid>

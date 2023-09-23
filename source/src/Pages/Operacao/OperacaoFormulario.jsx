@@ -26,7 +26,7 @@ import 'dayjs/locale/pt-br'
 import SaveIcon from '@mui/icons-material/Save';
 import MuiAlert from '@mui/material/Alert';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import ValidadorPlaca from '../../components/Shared/ValidadorPlaca';
 
@@ -51,18 +51,19 @@ const OperacaoFormulario = () => {
     const [openConfirmaSalvar, setConfirmaSalvar] = useState(false);
 
     const navigate = useNavigate();
-
+    const [desabilitaDataSaida, setDesabilitaDataSaida] = useState(true);
     const [placa, setPlaca] = useState('');
     const [veiculoCadastroOk, setVeiculoCadastroOk] = useState(false);
     const [veiculo, setVeiculo] = useState('')
     const [escondeDadosVeiculo, setEscondeDadosVeiculo] = useState(false);
     const [observacao, setObservacao] = useState('');
-    const [value, setValue] = React.useState(dayjs(new Date()));
-    const [novoRegistro, setNovoRegistro] = useState(false);
+    const [dataEntrada, setDataEntrada] = React.useState(dayjs(new Date()));
+    const [dataSaida, setDataSaida] = React.useState(null);
+    const [editarRegistro, setEditarRegistro] = useState(false);
     const [salvando, setSalvando] = useState(false);
     const [tipos, setTipos] = useState([]);
     const [codigoTipo, setCodigoTipo] = useState(0);
-    const [open, setOpen] = useState(false);
+    const [titulo, setTitulo] = useState('');
 
     const [openDialog, setOpenDialog] = useState(false);
 
@@ -83,6 +84,21 @@ const OperacaoFormulario = () => {
     const urlBaseOperacao = `${import.meta.env.VITE_URL_API_OPERACAO}`;
     const urlBaseVeiculo = `${import.meta.env.VITE_URL_API_VEICULO}`;
 
+    const { id } = useParams();
+
+    /** tipos /marcas / cores - carregamento inicial do formulario*/
+    useEffect(() => {
+        setTitulo("Operação - Nova entrada de registro do estacionamento");
+        ListaTipos();
+        ListaMarcas();
+        ListaCores();
+        if (id > 0) {
+            setEditarRegistro(true);
+            GetOperacao();
+            setTitulo("Operação - Editar o registro do estacionamento");
+
+        }
+    }, []);
 
 
     async function ListaTipos() {
@@ -126,29 +142,35 @@ const OperacaoFormulario = () => {
                 handleMensagemComErro('Tipo de Operação inválida!Por favor, verifique.');
                 return false;
             }
-            //validando a data
-            if (!Date.parse(value.toString())) {
-                handleMensagemComErro('Data e Hora de entrada inválida!Por favor, verifique.');
-                return false;
+            if (!editarRegistro) {
+                //validando a data
+                if (!Date.parse(dataEntrada.toString())) {
+                    handleMensagemComErro('Data e Hora de entrada inválida!Por favor, verifique.');
+                    return false;
+                }
+
+                //validando a placa do veiculo
+                if (!ValidadorPlaca(placa)) {
+                    handleMensagemComErro('Placa inválida!Por favor, verifique.');
+                    return false;
+                }
+
+                if (!veiculoCadastroOk) {
+                    setOpenDialog(true);
+                    setTimeout(() => {
+                        setDisabled(true);
+                    }, 2000);
+
+                    return false;
+                }
             }
 
-            //validando a placa do veiculo
-            if (!ValidadorPlaca(placa)) {
-                handleMensagemComErro('Placa inválida!Por favor, verifique.');
-                return false;
-            }
-
-            if (!veiculoCadastroOk) {
-                setOpenDialog(true);
-                setDisabled(true);
-                return false;
-            }
-            
             handleConfirmacaoSalvar();
-            
 
-        } catch {
+
+        } catch (error) {
             setSalvando(false);
+            console.log(error);
         }
 
 
@@ -159,7 +181,7 @@ const OperacaoFormulario = () => {
     /** rotina que faz uso da chamada do serviço de inclusão */
     const RegistraOperacao = () => {
         try {
-           
+
             Desabilitar_Botao_Salvar_Dialogo_e_Principal();
             const data = new FormData();
             data.append("placa_veiculo", placa.toUpperCase().trim());
@@ -176,17 +198,17 @@ const OperacaoFormulario = () => {
                 .then((response) => {
                     if (response.status === 200) {
                         handleMensagemComSucesso();
-                        
+
                     }
                     else if (response.status === 400) {
                         handleMensagemComErro('O veiculo já existe registrado!');
                         Habilitar_Botao_Salvar_Dialogo_e_Principal();
-           
+
                     }
                     else {
                         Habilitar_Botao_Salvar_Dialogo_e_Principal();
                         handleMensagemComErro('');
-            
+
                     }
                 })
         } catch (error) {
@@ -198,6 +220,49 @@ const OperacaoFormulario = () => {
             handleMensagemComErro(error);
         }
     }
+
+   /** rotina que faz uso da chamada do serviço de atualizacao */
+   const AtualizarRegistraOperacao = () => {
+    try {
+
+
+        const data = new FormData();
+        data.append("codigo", id);        
+        data.append("codigo_tipo_operacao", codigoTipo);
+        data.append("observacao", observacao);
+
+
+        fetch(`${urlBaseOperacao}/operacao`,
+            {
+                method: 'PUT',
+                body: data
+
+            })
+            .then((response) => {
+                if (response.status === 204) {
+                    handleMensagemComSucesso();
+
+                }
+                else if (response.status === 400) {
+                    handleMensagemComErro('A operação já existe registrado!');
+
+
+                }
+                else {
+                    Habilitar_Botao_Salvar_Dialogo_e_Principal();
+                    handleMensagemComErro('');
+
+                }
+            })
+    } catch (error) {
+        if (error.message === "Failed to fetch") {
+            // get error message from body or default to response status                    
+            alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
+            return Promise.reject(error);
+        }
+        handleMensagemComErro(error);
+    }
+}
 
     /** Salvar veiculo */
     const SalvarRegistroVeiculo = () => {
@@ -214,7 +279,7 @@ const OperacaoFormulario = () => {
         }
         /** Salvando o registro via serviço do veiculo */
         try {
-            
+
             const data = new FormData();
             data.append("codigo_modelo", codigoModelo);
             data.append("cor_id", codigoCor);
@@ -250,13 +315,20 @@ const OperacaoFormulario = () => {
         }
     }
 
-    const handleConfirmacaoSalvar =()=>{
+    const handleConfirmacaoSalvar = () => {
         setConfirmaSalvar(true);
     }
 
+    /** salva - chamando os serviços de POST e PUT */
     const handleSalvarRegistro = () => {
+        if (editarRegistro)
+        {
+            AtualizarRegistraOperacao();
+             
+        }else{
+            RegistraOperacao();
+        }
         
-        RegistraOperacao();
 
     }
     const consulta_veiculo = () => {
@@ -348,17 +420,30 @@ const OperacaoFormulario = () => {
             });
     }
 
+    const GetOperacao = () => {
+        fetch(`${urlBaseOperacao}/operacao_id?codigo=${id}`)
+            .then(response => response.json())
+            .then(responseData => {
+                setPlaca(responseData.placa_veiculo);
+                setCodigoTipo(responseData.codigo_tipo_operacao);
+                setObservacao(responseData.observacao);
+                setDataEntrada(new Date(responseData.data_entrada));
+                setDataSaida(responseData.data_saida);
+            })
+            .catch(error => {
+                if (error.message === "Failed to fetch") {
+                    // get error message from body or default to response status                    
+                    alert('A comunicação com os serviços de Operação está fora!');
+                    return Promise.reject(error);
+                }
+            });
+    }
+
     /** veiculo */
     useEffect(() => {
         consulta_veiculo();
     }, [placa]);
 
-    /** tipos /marcas / cores */
-    useEffect(() => {
-        ListaTipos();
-        ListaMarcas();
-        ListaCores();
-    }, []);
 
     //modelos conforme marca
     useEffect(() => {
@@ -373,13 +458,14 @@ const OperacaoFormulario = () => {
         handleCloseMensagemSucesso();
     };
 
+    /** fecha dialogo do cadastro de veiculo */
     const handleCloseDialog = () => {
         setOpenDialog(false);
         consulta_veiculo();
     };
 
     const handleCloseDialogConfirmar = () => {
-        RegistraOperacao();
+        setConfirmaSalvar(false);
 
     }
 
@@ -410,11 +496,9 @@ const OperacaoFormulario = () => {
 
     const handleMensagemComSucesso = () => {
         setMensagemComSucesso(true);
-        setTimeout(() => {
-            Habilitar_Botao_Salvar_Dialogo_e_Principal();
-            handleClose();
+        setTimeout(() => {                       
             redirecionar();
-        }, 4000);
+        }, 3000);
 
     };
 
@@ -438,7 +522,7 @@ const OperacaoFormulario = () => {
         setMensagemComSucesso(true);
         setDisabledSalvarVeiculo(true);
         setDisabled(false);
-        setDisabledCamposVeiculo(true); 
+        setDisabledCamposVeiculo(true);
     };
 
     const redirecionar = () => {
@@ -448,15 +532,16 @@ const OperacaoFormulario = () => {
     /* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Renderizaçã @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
     return (
         <div>
-            <TituloPagina titulo="Operação - Nova entrada no estacionamento" />
+            <TituloPagina titulo={titulo} />
             <br />
             {/* ********************** placa / data / tipo*************** */}
             <Box
-                component='div'
+
 
                 noValidate
                 autoComplete="off"
                 textAlign={'left'}
+
             >
                 {/* Placa ***************************************************** */}
                 <TextField
@@ -469,8 +554,10 @@ const OperacaoFormulario = () => {
                     inputProps={{
                         maxLength: 7,
                         style: { textTransform: "uppercase", fontSize: 14 },
+
                     }}
                     helperText="Digite a placa sem o traço separador"
+                    readOnly={editarRegistro}
                 />
 
                 &nbsp;
@@ -485,12 +572,36 @@ const OperacaoFormulario = () => {
                         sx={{ width: 150, textAlign: 'center' }}
                     >
                         <DateTimeField
+                            id="dataEntrada"
                             label="Data-Entrada"
-                            value={value}
-                            onChange={(newValue) => setValue(newValue)}
+                            value={dayjs(dataEntrada)}
+                            onChange={(newValue) => setDataEntrada(newValue)}
                             inputProps={{
                                 style: { fontSize: 14, textAlign: 'left' },
+
                             }}
+                            readOnly={editarRegistro}
+                        />
+                    </FormControl>
+
+
+                    &nbsp;
+
+                    <FormControl
+                        sx={{ width: 150, textAlign: 'center' }}
+
+                    >
+                        <DateTimeField
+                            id="dataSaida"
+                            label="Data-Saida"
+                            value={dataSaida}
+                            onChange={(newValue) => setDataSaida(newValue)}
+                            inputProps={{
+                                style: {
+                                    fontSize: 14, textAlign: 'left',
+                                },
+                            }}
+                            readOnly={desabilitaDataSaida}
                         />
                     </FormControl>
 
@@ -498,7 +609,7 @@ const OperacaoFormulario = () => {
                 &nbsp;
                 {/* Tipo ***************************************************** */}
                 <FormControl
-                    sx={{ width: 560, textAlign: 'center' }}
+                    sx={{ width: 513, textAlign: 'center' }}
                 >
                     <InputLabel id="lblSelectTipo">Tipo</InputLabel>
                     <Select
@@ -508,9 +619,11 @@ const OperacaoFormulario = () => {
                         value={codigoTipo}
                         label="Tipo"
                         inputProps={{
-                            style: { fontSize: 18, minWidth: 300 },
+                            style: { fontSize: 18, minWidth: 500 }
+
                         }}
                         onChange={HandleTipo}
+
                     >
                         <MenuItem value={0} key={0} >Selecione um Tipo</MenuItem>
 
@@ -529,7 +642,7 @@ const OperacaoFormulario = () => {
                 <Box
                     component="div"
                     hidden={escondeDadosVeiculo}
-                    sx={{ bgcolor: '#cfe8fc' }}
+                    sx={{ bgcolor: 'ButtonHighlight' }}
                 >
                     <Typography>
                         <b>Informações do Veículo</b>
@@ -588,11 +701,14 @@ const OperacaoFormulario = () => {
             </Container>
             <br />
             {/* **********************  Observacao *************** */}
-            <div>
+            <Box
+           
+            >
                 <FormControl
                     noValidate
                     autoComplete="off"
-                    sx={{ width: 950 }}
+                    // sx={{ width: 950 }}
+                    fullWidth
                 >
 
 
@@ -612,10 +728,11 @@ const OperacaoFormulario = () => {
                         rows={3}
 
 
+
                     />
 
                 </FormControl>
-            </div>
+            </Box>
             <br />
             {/* ********************** Botões  ******************************** */}
             <Box
@@ -802,7 +919,7 @@ const OperacaoFormulario = () => {
                         <Button variant="contained" color="primary" disabled={disabled} onClick={handleConfirmacaoSalvar}>
                             Continuar
                         </Button>
-                        <Button variant="contained" color={'error'} onClick={handleCloseDialogConfirmar} autoFocus>Desistir</Button>
+                        <Button variant="contained" color={'error'} onClick={handleCloseDialog} autoFocus>Desistir</Button>
                     </DialogActions>
                 </Dialog>
             </Box>
@@ -821,7 +938,7 @@ const OperacaoFormulario = () => {
 
                 >
                     <DialogTitle id="alert-dialog-title"
-                        fullWidth={true}
+                        fullWidth 
                         sx={{
                             bgcolor: '#1976d2',
                             color: 'white',
@@ -855,7 +972,7 @@ const OperacaoFormulario = () => {
                                     textAlign: 'left',
                                     marginTop: '5'
                                 }}
-                                fullWidth={true}
+                                fullWidth 
                             >
                                 Tem certeza que deseja continuar?
                             </Box>

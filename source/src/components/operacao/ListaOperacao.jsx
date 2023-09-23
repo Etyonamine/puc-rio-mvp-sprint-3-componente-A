@@ -95,10 +95,6 @@ export default function ListaOperacao() {
     };
     const excluirRegistro = () => {
 
-        if (quantidadeOperacoes > 0) {
-            handleMensagemComErro(`Não é possível excluir! Existe [ ${quantidadeOperacoes} ] Operações registradas com este veículo!`);
-            return false;
-        }
         const data = new FormData();
         data.append("codigo", codigo);
 
@@ -233,19 +229,19 @@ export default function ListaOperacao() {
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <Button variant="contained" color="primary" size="small" endIcon={<EditIcon />}>
+                                                            <Button variant="contained" sx={{ fontSize: 11}} color="primary" size="small" endIcon={<EditIcon />}>
 
-                                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/OperacaoFormulario/${row.codigo}`}>Editar</Link>
+                                                                <Link  style={{ textDecoration: "none", color: "white" }} to={`/OperacaoFormulario/${row.codigo}`}>Editar</Link>
 
                                                             </Button>
                                                         </td>
                                                         <td>
-                                                            <Button variant="contained" size="small" endIcon={<ExitIcon />} color='success' onClick={() => AbrirModalExcluir(row)}>
+                                                            <Button sx={{ fontSize: 11}} variant="contained" size="small"   endIcon={<ExitIcon />} color='success' onClick={() => AbrirModalExcluir(row)}>
                                                                 Saída
                                                             </Button>
                                                         </td>
                                                         <td>
-                                                            <Button variant="contained" size="small" endIcon={<DeleteIcon />} color='error' onClick={() => AbrirModalExcluir(row)}>
+                                                            <Button  sx={{ fontSize: 11}} variant="contained" size="small" endIcon={<DeleteIcon />} color='error' onClick={() => AbrirModalExcluir(row)}>
                                                                 Excluir
                                                             </Button>
                                                         </td>
@@ -298,7 +294,7 @@ export default function ListaOperacao() {
                                 textAlign: 'left'
                             }}
                         >
-                            Tem certeza que deseja excluir a Marca <b> [ {placa} ]</b>?
+                            Tem certeza que deseja excluir o registro com o código <b> [ {codigo} ]</b>?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
