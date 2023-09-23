@@ -36,7 +36,7 @@ export default function ListaOperacao() {
     const [operacoes, setOperacoes] = useState([]);
     const [placa, setPlaca] = useState('');
     const [codigo, setCodigo] = useState(0);
-    
+
 
     const [open, setOpen] = React.useState(false);
     const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
@@ -47,8 +47,8 @@ export default function ListaOperacao() {
     const urlVeiculoBase = `${import.meta.env.VITE_URL_API_VEICULO}`;
     useEffect(() => {
         getLista();
-       
-      
+
+
 
     }, []);
 
@@ -57,7 +57,7 @@ export default function ListaOperacao() {
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: theme.palette.common.black,
             color: theme.palette.common.white,
-            fontSize:12
+            fontSize: 12
         },
         [`&.${tableCellClasses.body}`]: {
             fontSize: 12,
@@ -142,13 +142,13 @@ export default function ListaOperacao() {
 
         setCodigo(data.codigo);
         setOpen(true);
-    }  
+    }
 
     const getLista = () => {
         fetch(`${urlOperacaoBase}/operacoes`)
             .then(response => response.json())
-            .then(responseData => {                
-                setOperacoes(responseData.lista);                
+            .then(responseData => {
+                setOperacoes(responseData.lista);
             })
             .catch(error => {
                 if (error.message === "Failed to fetch") {
@@ -169,7 +169,7 @@ export default function ListaOperacao() {
                     width: '100%',
                     marginTop: 1,
                     marginBottom: 1
-                    
+
                 }}
             >
                 <Stack direction="row">
@@ -200,9 +200,9 @@ export default function ListaOperacao() {
                         </TableHead>
 
                         <TableBody >
-                            
-                            { 
-                                
+
+                            {
+
                                 operacoes.map((row) => (
                                     <StyledTableRow
                                         key={row.codigo}
@@ -216,13 +216,13 @@ export default function ListaOperacao() {
                                             {row.codigo}
                                         </StyledTableCell>
                                         <StyledTableCell align='center'>
-                                            { row.placa_veiculo }
+                                            {row.placa_veiculo}
                                         </StyledTableCell>
                                         <StyledTableCell align='center'>
                                             {new Date(row.data_entrada).toLocaleString().replace(',', ' - ')}
                                         </StyledTableCell>
                                         <StyledTableCell align='center'>
-                                            {row.data_saida}
+                                            {new Date(row.data_saida).toLocaleString().replace(',', ' - ')}
                                         </StyledTableCell>
                                         <StyledTableCell align='center'>
                                             {`${row.tipo_operacao[0].sigla} - ${row.tipo_operacao[0].descricao}`}
@@ -235,17 +235,35 @@ export default function ListaOperacao() {
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <Button variant="contained" sx={{ fontSize: 11}} color="primary" size="small" endIcon={<EditIcon />}>
-                                                                <Link  style={{ textDecoration: "none", color: "white" }} to={`/OperacaoFormulario/${row.codigo}`}>Editar</Link>
+                                                            <Button 
+                                                            variant="contained" 
+                                                              sx={{ fontSize: 11 }}
+                                                              color="primary"
+                                                              size="small" 
+                                                              endIcon={<EditIcon />}
+                                                              disabled = {row.data_saida !== null}>
+                                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/OperacaoFormulario/${row.codigo}`}>Editar</Link>
                                                             </Button>
                                                         </td>
                                                         <td>
-                                                            <Button sx={{ fontSize: 11}} variant="contained" size="small"   endIcon={<ExitIcon />} color='success'  >                                                                                                                                
-                                                                <Link  style={{ textDecoration: "none", color: "white" }} to={`/OperacaoSaida/${row.codigo}`}>Saída</Link>
+                                                            <Button sx={{ fontSize: 11 }}
+                                                                variant="contained"
+                                                                size="small"
+                                                                endIcon={<ExitIcon />}
+                                                                color='success'
+                                                                disabled={row.data_saida !== null}
+                                                            >
+                                                                <Link style={{ textDecoration: "none", color: "white" }} to={`/OperacaoSaida/${row.codigo}`}>Saída</Link>
                                                             </Button>
                                                         </td>
                                                         <td>
-                                                            <Button  sx={{ fontSize: 11}} variant="contained" size="small" endIcon={<DeleteIcon />} color='error' onClick={() => AbrirModalExcluir(row)}>
+                                                            <Button sx={{ fontSize: 11 }}
+                                                                variant="contained"
+                                                                size="small"
+                                                                endIcon={<DeleteIcon />}
+                                                                color='error'
+                                                                onClick={() => AbrirModalExcluir(row)}
+                                                                disabled={row.data_saida !== null}>
                                                                 Excluir
                                                             </Button>
                                                         </td>

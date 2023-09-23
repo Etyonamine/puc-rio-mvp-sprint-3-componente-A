@@ -9,8 +9,8 @@ export default function CalcularHoras(dataEntrada, dataSaida) {
 
     let diffMs = (date2 - date1);
     let diffHrs = Math.floor((diffMs % 86400000) / 3600000);
-    let diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
+    let diffMins = Math.round((diffMs % 86400000) % 3600000);
     return diffMs;//retorno em segundos
 
-    /* return `${diffHrs.toString()}h ${diffMins.toString()}m` ; */
+    
 }

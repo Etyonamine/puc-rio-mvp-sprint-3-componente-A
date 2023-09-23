@@ -10,6 +10,6 @@ export default function CalcularHoraTexto(dataEntrada, dataSaida) {
     let diffMs = (date2 - date1);
     let diffHrs = Math.floor((diffMs % 86400000) / 3600000);
     let diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
-
-    return `${diffHrs.toString()}h ${diffMins.toString()}m` ;
+   
+    return `${diffHrs.toString()} h ${diffMins.toString()} m` ;
 }

@@ -51,7 +51,7 @@ const OperacaoFormulario = () => {
     const [openConfirmaSalvar, setConfirmaSalvar] = useState(false);
 
     const navigate = useNavigate();
-    const [desabilitaDataSaida, setDesabilitaDataSaida] = useState(true);
+    
     const [placa, setPlaca] = useState('');
     const [veiculoCadastroOk, setVeiculoCadastroOk] = useState(false);
     const [veiculo, setVeiculo] = useState('')
@@ -601,7 +601,7 @@ const OperacaoFormulario = () => {
                                     fontSize: 14, textAlign: 'left',
                                 },
                             }}
-                            readOnly={desabilitaDataSaida}
+                            readOnly={true}
                         />
                     </FormControl>
 
