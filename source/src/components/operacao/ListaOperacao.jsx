@@ -198,7 +198,7 @@ export default function ListaOperacao() {
                         value={dayjs(dataEntrada)}
                          onChange={(newValue) => setDataEntrada(newValue)}
                         inputProps={{
-                            style: { fontSize: 14, textAlign: 'left' },
+                            style: { fontSize: 14, textAlign: 'left', width: 100 },
 
                         }}
                     />

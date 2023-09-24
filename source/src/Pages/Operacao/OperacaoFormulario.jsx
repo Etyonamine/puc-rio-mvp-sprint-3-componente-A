@@ -29,8 +29,8 @@ import MuiAlert from '@mui/material/Alert';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import ValidadorPlaca from '../../components/Shared/ValidadorPlaca';
-
-
+import FormataDataHora from '../../components/Shared/FormatarDataHora';
+import AdicionarHorasNaData from '../../components/Shared/AdicionarOuReduzirDataPorHora';
 
 /* ################## rotinas de mensagem para o usuario ############################ */
 const Alert = forwardRef(function Alert(props, ref) {
@@ -187,11 +187,14 @@ const OperacaoFormulario = () => {
     const RegistraOperacao = () => {
         try {
 
+            let data_entrada_param = AdicionarHorasNaData(dataEntrada,3);          
+            
             Desabilitar_Botao_Salvar_Dialogo_e_Principal();
             const data = new FormData();
             data.append("placa_veiculo", placa.toUpperCase().trim());
             data.append("codigo_tipo_operacao", codigoTipo);
             data.append("observacao", observacao);
+            data.append("data_entrada", FormataDataHora(data_entrada_param));
 
 
             fetch(`${urlBaseOperacao}/operacao`,
@@ -459,26 +462,26 @@ const OperacaoFormulario = () => {
 
     }, [codigoMarca])
 
-    const handleClose = () => {
-
-        handleCloseMensagemComErro();
-        handleCloseMensagemSucesso();
-    };
 
     /** pesquisar se existe veiculo em aberto */
     const pesquisaVeiculoAberto = () => {
-        let urlpesquisa = `${urlBaseOperacao}/operacao_veiculo_id?placa=${placa}`;
+        let urlpesquisa = `${urlBaseOperacao}/operacao_veiculo_id?placa_veiculo=${placa.toUpperCase().trim()}`;
         setVeiculoEmAberto(false);
-        fetch(urlpesquisa)
-            .then(response => response.json())
-            .then(data => {
-                setVeiculoEmAberto(true);
-            })
-            .catch(error => {
-                console.log(error);
-                handleMensagemComErro('Erro na pesquisa do veiculo na base de operação!')
-                setVeiculoEmAberto(false);
-            });
+
+        if (placa.length ===7){
+            fetch(urlpesquisa)
+                .then(response => response.json())
+                .then(data => {
+                    if(data.length>0){
+                        setVeiculoEmAberto(true);
+                    }                    
+                })
+                .catch(error => {
+                    console.log(error);
+                    handleMensagemComErro('Erro na pesquisa do veiculo na base de operação!')
+                    setVeiculoEmAberto(false);
+                });
+        }        
     }
 
     /** fecha dialogo do cadastro de veiculo */
@@ -521,7 +524,7 @@ const OperacaoFormulario = () => {
         setMensagemComSucesso(true);
         setTimeout(() => {
             redirecionar();
-        }, 3000);
+        }, 5000);
 
     };
 
