@@ -34,6 +34,8 @@ import SubTituloVeiculo from '../../components/sub-titulos/veiculos/subTituloVei
 import SubTituloInformacaoOperacao from '../../components/sub-titulos/veiculos/subTituloInformacaoOperacao';
 import CalcularHoraTexto from '../../components/Shared/CalcularHoraTexto';
 import CalcularHoras from '../../components/Shared/CalcularHoras';
+import FormataDataHora from '../../components/Shared/FormatarDataHora';
+import AdicionarHorasNaData from '../../components/Shared/AdicionarOuReduzirDataPorHora';
 
 /* ################## rotinas de mensagem para o usuario ############################ */
 const Alert = forwardRef(function Alert(props, ref) {
@@ -168,12 +170,13 @@ const OperacaoSaida = () => {
 
     const handle_baixa_operacao = () => {
         try {             
+            let data_entrada_param = AdicionarHorasNaData(dataEntrada,3);  
 
             const data = new FormData();
             data.append("codigo", id);
             data.append("codigo_tipo_operacao", codigoTipo);
             data.append("observacao", observacao);
-            data.append("data_saida", formata_data_hora_saida());
+            data.append("data_saida", FormataDataHora(data_entrada_param));
             data.append("total_permanencia", totalSegundos);
             data.append("valor_total", valorTotalPagar.replace(',', '.'));
             data.append("valor_base_calculo", valorHoraAvulso.replace(',', '.'));
