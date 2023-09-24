@@ -51,7 +51,7 @@ const OperacaoFormulario = () => {
     const [openConfirmaSalvar, setConfirmaSalvar] = useState(false);
 
     const navigate = useNavigate();
-    const [veiculoEmAberto,setVeiculoEmAberto] = useState(false);
+    const [veiculoEmAberto, setVeiculoEmAberto] = useState(false);
     const [placa, setPlaca] = useState('');
     const [veiculoCadastroOk, setVeiculoCadastroOk] = useState(false);
     const [veiculo, setVeiculo] = useState('')
@@ -137,27 +137,27 @@ const OperacaoFormulario = () => {
     const SalvarRegistro = () => {
 
         try {
-            
+
             //validando se foi escolhido um tipo
             if (codigoTipo === undefined || codigoTipo === 0) {
-                handleMensagemComErro('Tipo de Operação inválida!Por favor, verifique.');
+                handleMensagemComErro(' Tipo de Operação inválida! Por favor, verifique.');
                 return false;
             }
             if (!editarRegistro) {
                 //validando a data
                 if (!Date.parse(dataEntrada.toString())) {
-                    handleMensagemComErro('Data e Hora de entrada inválida!Por favor, verifique.');
+                    handleMensagemComErro(' Data e Hora de entrada inválida! Por favor, verifique.');
                     return false;
                 }
 
                 //validando a placa do veiculo
                 if (!ValidadorPlaca(placa)) {
-                    handleMensagemComErro('Placa inválida!Por favor, verifique.');
+                    handleMensagemComErro(' Placa inválida! Por favor, verifique.');
                     return false;
                 }
-                pesquisaVeiculoAberto();
-                if (veiculoEmAberto){
-                    handleMensagemComErro('Existe uma operação com este veículo em ABERTO!Por favor, verifique.');
+
+                if (veiculoEmAberto) {
+                    handleMensagemComErro(' Existe uma operação com este veículo em ABERTO! Por favor, verifique.');
                     return false;
                 }
                 if (!veiculoCadastroOk) {
@@ -226,52 +226,52 @@ const OperacaoFormulario = () => {
         }
     }
 
-   /** rotina que faz uso da chamada do serviço de atualizacao */
-   const AtualizarRegistraOperacao = () => {
-    try {
+    /** rotina que faz uso da chamada do serviço de atualizacao */
+    const AtualizarRegistraOperacao = () => {
+        try {
 
 
-        const data = new FormData();
-        data.append("codigo", id);        
-        data.append("codigo_tipo_operacao", codigoTipo);
-        data.append("observacao", observacao);
+            const data = new FormData();
+            data.append("codigo", id);
+            data.append("codigo_tipo_operacao", codigoTipo);
+            data.append("observacao", observacao);
 
 
-        fetch(`${urlBaseOperacao}/operacao`,
-            {
-                method: 'PUT',
-                body: data
+            fetch(`${urlBaseOperacao}/operacao`,
+                {
+                    method: 'PUT',
+                    body: data
 
-            })
-            .then((response) => {
-                if (response.status === 204) {
-                    handleMensagemComSucesso();
+                })
+                .then((response) => {
+                    if (response.status === 204) {
+                        handleMensagemComSucesso();
 
-                }
-                else if (response.status === 400) {
-                    handleMensagemComErro('A operação já existe registrado!');
+                    }
+                    else if (response.status === 400) {
+                        handleMensagemComErro('A operação já existe registrado!');
 
 
-                }
-                else {
-                    Habilitar_Botao_Salvar_Dialogo_e_Principal();
-                    handleMensagemComErro('');
+                    }
+                    else {
+                        Habilitar_Botao_Salvar_Dialogo_e_Principal();
+                        handleMensagemComErro('');
 
-                }
-            })
-    } catch (error) {
-        if (error.message === "Failed to fetch") {
-            // get error message from body or default to response status                    
-            alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
-            return Promise.reject(error);
+                    }
+                })
+        } catch (error) {
+            if (error.message === "Failed to fetch") {
+                // get error message from body or default to response status                    
+                alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
+                return Promise.reject(error);
+            }
+            handleMensagemComErro(error);
         }
-        handleMensagemComErro(error);
     }
-}
 
     /** Salvar veiculo */
     const SalvarRegistroVeiculo = () => {
-        /**  valida se existe modelo */       
+        /**  valida se existe modelo */
 
         if (codigoModelo.length == 0) {
             handleMensagemComErro('Por favor, informar um modelo de veículo!');
@@ -327,16 +327,16 @@ const OperacaoFormulario = () => {
 
     /** salva - chamando os serviços de POST e PUT */
     const handleSalvarRegistro = () => {
-        if (editarRegistro)
-        {
+        if (editarRegistro) {
             AtualizarRegistraOperacao();
-             
-        }else{
+
+        } else {
             RegistraOperacao();
         }
-        
+
 
     }
+
     const consulta_veiculo = () => {
 
         let placaPesquisar = placa.toUpperCase().trim();
@@ -434,7 +434,7 @@ const OperacaoFormulario = () => {
                 setCodigoTipo(responseData.codigo_tipo_operacao);
                 setObservacao(responseData.observacao);
                 setDataEntrada(new Date(responseData.data_entrada));
-                setDataSaida(responseData.data_saida);
+
             })
             .catch(error => {
                 if (error.message === "Failed to fetch") {
@@ -448,6 +448,7 @@ const OperacaoFormulario = () => {
     /** veiculo */
     useEffect(() => {
         consulta_veiculo();
+        pesquisaVeiculoAberto();
     }, [placa]);
 
 
@@ -465,21 +466,19 @@ const OperacaoFormulario = () => {
     };
 
     /** pesquisar se existe veiculo em aberto */
-    const pesquisaVeiculoAberto =() => {
+    const pesquisaVeiculoAberto = () => {
         let urlpesquisa = `${urlBaseOperacao}/operacao_veiculo_id?placa=${placa}`;
         setVeiculoEmAberto(false);
         fetch(urlpesquisa)
-            .then(response=>response.json())
-            .then(data=>{
-                if (data.veiculo.data_saida == null){
-                    setVeiculoEmAberto(true);
-                }
+            .then(response => response.json())
+            .then(data => {
+                setVeiculoEmAberto(true);
             })
-            .catch(error=>{
+            .catch(error => {
                 console.log(error);
                 handleMensagemComErro('Erro na pesquisa do veiculo na base de operação!')
                 setVeiculoEmAberto(false);
-            });        
+            });
     }
 
     /** fecha dialogo do cadastro de veiculo */
@@ -520,7 +519,7 @@ const OperacaoFormulario = () => {
 
     const handleMensagemComSucesso = () => {
         setMensagemComSucesso(true);
-        setTimeout(() => {                       
+        setTimeout(() => {
             redirecionar();
         }, 3000);
 
@@ -564,7 +563,7 @@ const OperacaoFormulario = () => {
 
                 noValidate
                 autoComplete="off"
-                textAlign={'left'}
+                textAlign={'center'}
 
             >
                 {/* Placa ***************************************************** */}
@@ -726,36 +725,26 @@ const OperacaoFormulario = () => {
             <br />
             {/* **********************  Observacao *************** */}
             <Box
-           
+                component = 'div'                
+                noValidate
+                autoComplete="off"
+
             >
-                <FormControl
-                    noValidate
-                    autoComplete="off"
-                    // sx={{ width: 950 }}
-                    fullWidth
-                >
+                <TextField
+                    id="outlined-helperText"
+                    label="Observação"
+                    labelrequired="*"
+                    multiline
+                    value={observacao}
+                    onChange={e => setObservacao(e.target.value)}
+                    
+                    inputProps={{
+                        maxLength: 300,                                            
+                        style: { textTransform: "uppercase", fontSize: 12 , width:1040},
 
-
-                    <TextField
-                        id="outlined-helperText"
-                        label="Observação"
-                        labelrequired="*"
-                        multiline
-                        value={observacao}
-                        onChange={e => setObservacao(e.target.value)}
-                        inputProps={{
-                            maxLength: 300,
-                            width: 600,
-                            style: { textTransform: "uppercase", fontSize: 12 },
-
-                        }}
-                        rows={3}
-
-
-
-                    />
-
-                </FormControl>
+                    }}
+                    rows={3}
+                />
             </Box>
             <br />
             {/* ********************** Botões  ******************************** */}
@@ -809,7 +798,7 @@ const OperacaoFormulario = () => {
 
                 >
                     <DialogTitle id="alert-dialog-title"
-                        fullWidth={true}
+
                         sx={{
                             bgcolor: '#1976d2',
                             color: 'white',
@@ -837,7 +826,7 @@ const OperacaoFormulario = () => {
                             <Box
                                 component="div"
                                 sx={{ backgroundColor: 'ButtonHighlight', color: 'black', marginLeft: '5', textAlign: 'center', marginTop: '5' }}
-                                fullWidth={true}
+
                             >
                                 Atenção! Não existe veículo cadastrado com esta <b> [ {placa.toUpperCase().trim()} ]</b>!
                                 <br />
@@ -848,7 +837,7 @@ const OperacaoFormulario = () => {
                         <br />
                         <Container
                             maxWidth="xl"
-                            fullWidth={true}
+
                         >
                             <Box
                                 component="div"
@@ -927,8 +916,8 @@ const OperacaoFormulario = () => {
                             </Box>
                             <br />
                             {/** ************** Botão Salvar veiculo *****************/}
-                            <Box component="div">
-                                <FormControl fullWidth>
+                            <Box component="div"  >
+                                <FormControl >
                                     <Button variant="contained"
                                         color="primary"
                                         disabled={disabledSalvarVeiculo}
@@ -962,7 +951,7 @@ const OperacaoFormulario = () => {
 
                 >
                     <DialogTitle id="alert-dialog-title"
-                        fullWidth 
+
                         sx={{
                             bgcolor: '#1976d2',
                             color: 'white',
@@ -996,7 +985,7 @@ const OperacaoFormulario = () => {
                                     textAlign: 'left',
                                     marginTop: '5'
                                 }}
-                                fullWidth 
+
                             >
                                 Tem certeza que deseja continuar?
                             </Box>

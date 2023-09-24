@@ -25,6 +25,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ExitIcon from '@mui/icons-material/ExitToAppOutlined';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import FormataData from '../Shared/FormatarData';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -33,10 +39,8 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 export default function ListaOperacao() {
 
-    const [operacoes, setOperacoes] = useState([]);
-    const [placa, setPlaca] = useState('');
+    const [operacoes, setOperacoes] = useState([]);     
     const [codigo, setCodigo] = useState(0);
-
 
     const [open, setOpen] = React.useState(false);
     const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
@@ -44,14 +48,20 @@ export default function ListaOperacao() {
     const [textoComErro, setTextoComErro] = useState('');
 
     const urlOperacaoBase = `${import.meta.env.VITE_URL_API_OPERACAO}`;
-    const urlVeiculoBase = `${import.meta.env.VITE_URL_API_VEICULO}`;
+
+    const [dataEntrada, setDataEntrada] = React.useState(dayjs(new Date()));
+
     useEffect(() => {
         getLista();
-
+        setDataEntrada(new Date());
 
 
     }, []);
 
+    useEffect(() => {
+        getLista();
+
+    }, [dataEntrada]);
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -145,7 +155,9 @@ export default function ListaOperacao() {
     }
 
     const getLista = () => {
-        fetch(`${urlOperacaoBase}/operacoes`)
+        let dataParam = FormataData(dataEntrada);
+
+        fetch(`${urlOperacaoBase}/operacao_data_entrada?data_entrada=${dataParam}`)
             .then(response => response.json())
             .then(responseData => {
                 setOperacoes(responseData.lista);
@@ -165,22 +177,35 @@ export default function ListaOperacao() {
             <Box
                 component="div"
                 sx={{
-                    height: 40,
+                    height: 60,
                     width: '100%',
                     marginTop: 1,
                     marginBottom: 1
 
                 }}
             >
-                <Stack direction="row">
+                <Stack direction="row" >
                     <Button variant="contained" color="primary">
                         <Link style={{ textDecoration: "none", color: "white" }} to={`/OperacaoFormulario`}>Entrada</Link>
                     </Button>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
+                    <DatePicker
+                        id="dataEntrada"
+                        label="Data-Entrada"
+                        value={dayjs(dataEntrada)}
+                         onChange={(newValue) => setDataEntrada(newValue)}
+                        inputProps={{
+                            style: { fontSize: 14, textAlign: 'left' },
+
+                        }}
+                    />
+                </LocalizationProvider>
 
                 </Stack>
-
             </Box>
-
             {/* TABELA  ********************************************************************************** */}
             <Box
                 component="div"
@@ -222,7 +247,7 @@ export default function ListaOperacao() {
                                             {new Date(row.data_entrada).toLocaleString().replace(',', ' - ')}
                                         </StyledTableCell>
                                         <StyledTableCell align='center'>
-                                            {new Date(row.data_saida).toLocaleString().replace(',', ' - ')}
+                                            {row.data_saida !== null ?new Date(row.data_saida).toLocaleString().replace(',', ' - '):''}
                                         </StyledTableCell>
                                         <StyledTableCell align='center'>
                                             {`${row.tipo_operacao[0].sigla} - ${row.tipo_operacao[0].descricao}`}
@@ -235,13 +260,13 @@ export default function ListaOperacao() {
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <Button 
-                                                            variant="contained" 
-                                                              sx={{ fontSize: 11 }}
-                                                              color="primary"
-                                                              size="small" 
-                                                              endIcon={<EditIcon />}
-                                                              disabled = {row.data_saida !== null}>
+                                                            <Button
+                                                                variant="contained"
+                                                                sx={{ fontSize: 11 }}
+                                                                color="primary"
+                                                                size="small"
+                                                                endIcon={<EditIcon />}
+                                                                disabled={row.data_saida !== null}>
                                                                 <Link style={{ textDecoration: "none", color: "white" }} to={`/OperacaoFormulario/${row.codigo}`}>Editar</Link>
                                                             </Button>
                                                         </td>
