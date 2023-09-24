@@ -1,6 +1,6 @@
 # Puc-rio-mvp-sprint-3-componente-A
 Trabalho de MVP do sprint 3 - Arquitetura de software
-Esta é uma aplicação front-end que irá consumir as API abaixo:
+Esta é uma aplicação front-end que irá consumir as APIs abaixo:
 
 ## API - Climática 
     Disponibiliza api para a previsão do tempo 
