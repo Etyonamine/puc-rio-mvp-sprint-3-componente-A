@@ -42,7 +42,9 @@ Esta é uma aplicação front-end que irá consumir as APIs abaixo:
 
 
 ## Construção da IMAGEM para o Docker
-docker build -t componente-a .
+1)Fazer o download do arquivo api_key_tempo.txt que contém a chave para ser aplicado nos arquivos ENV e ENV.Production (ambiente)
+2)Aplicar a chave APIKey disponibilizado no anexo na entrega do MVP.
+3)docker build -t componente-a .
 
 ### executar o comando 
  docker run -p 5173:5173 componente-a 
