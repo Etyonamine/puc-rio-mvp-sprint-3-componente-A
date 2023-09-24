@@ -11,11 +11,11 @@ function App() {
   return (
     <div className="App">      
         <Grid container spacing={2}>                    
-          <Grid item xs={10}>            
+          <Grid item xs={10} >            
             <TituloPrincipal />
             <Navbar />
           </Grid>
-          <Grid item xs={2}> 
+          <Grid item xs={2} > 
             <TempoApp />
            {/*  <DateCalendarValue /> */}
           </Grid>

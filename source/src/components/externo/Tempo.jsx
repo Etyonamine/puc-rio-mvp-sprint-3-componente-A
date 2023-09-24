@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
-
+import {
+  Box,
+  Stack,
+  Typography
+} from '@mui/material';
 class TempoApp extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +22,9 @@ class TempoApp extends Component {
       .then(responseData => {
         this.setState({
           temp: responseData.main.temp,
+          min: responseData.main.temp_min,
+          max: responseData.main.temp_max,
+          humi: responseData.main.humidity,
           desc: responseData.weather[0].description,
           icon: responseData.weather[0].icon,
           loading: false
@@ -30,41 +35,28 @@ class TempoApp extends Component {
     const imgSrc = 'http://openweathermap.org/img/w/' +
       this.state.icon + '.png';
 
-
-    const Item = styled(Paper)(({ theme }) => ({
-      backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-      ...theme.typography.body2,
-      padding: theme.spacing(1),
-      textAlign: 'center',
-      color: theme.palette.text.secondary,
-    }));
-
     if (this.state.loading) {
       return <p>Loading</p>;
     }
     else {
       return (
-        <div>          
-          <table>
-            <tbody>
-              <tr>
-                <td>Cidade: São Paulo</td>
-                <td><img src={imgSrc} alt="Weather icon" />    </td>
-              </tr>
-              <tr>
-                <td colSpan="2">
-                  Temperature: {this.state.temp} °C
-                  <br/>
-                  Descrição: {this.state.desc}
-                </td>
-              </tr>
-              <tr>
-                <td colSpan="2">
-                  
-                </td>
-              </tr>
-            </tbody>
-          </table>          
+        <div>
+           
+          <Box
+            component='div'
+            
+          >
+            <Stack  >
+              <Typography sx={{fontSize:12}} marginTop = 'bottom'>
+                Cidade: São Paulo
+              <img src={imgSrc} alt="Weather icon"  width="30" height="30" />    </Typography>
+              <Typography sx={{fontSize:11}}>Temperature:&nbsp; {this.state.temp} °C</Typography>
+              <Typography sx={{fontSize:11}}>Min: &nbsp;{this.state.min} °C </Typography>
+              <Typography sx={{fontSize:11}}> Max:&nbsp; {this.state.max} °C</Typography>
+              <Typography sx={{fontSize:11}}> Umidade(%):&nbsp; {this.state.humi}</Typography> 
+            </Stack>
+
+          </Box>
         </div>
       );
     }
