@@ -9,13 +9,8 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    FormControl,
-    FormControlLabel,
-    InputLabel,
-    MenuItem,
-    Select,
-    Snackbar,
-    Switch,
+    FormControl,     
+    Snackbar,    
     Table,
     TextField
 } from '@mui/material';
@@ -160,17 +155,11 @@ const OperacaoSaida = () => {
         }
 
     }
-
-    const formata_data_hora_saida = (()=>{
-        let dataSaidaParam = new Date(dataSaida).toLocaleString().replace(",","");
-        let horaSaidaParam = new Date(dataSaida).toTimeString();
-        let retorno = `${dataSaidaParam.substring(6,10)}-${dataSaidaParam.substring(3,5)}-${dataSaidaParam.substring(0,2)} ${horaSaidaParam.substring(0,8)}`;
-        return retorno;
-    });
+ 
 
     const handle_baixa_operacao = () => {
         try {             
-            let data_entrada_param = AdicionarHorasNaData(dataEntrada,3);  
+            let data_entrada_param = AdicionarHorasNaData(dataSaida,3);  
 
             const data = new FormData();
             data.append("codigo", id);

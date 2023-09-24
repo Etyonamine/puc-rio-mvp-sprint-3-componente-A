@@ -288,7 +288,7 @@ const OperacaoFormulario = () => {
         }
         /** Salvando o registro via serviço do veiculo */
         try {
-
+            setDisabled(true);
             const data = new FormData();
             data.append("codigo_modelo", codigoModelo);
             data.append("cor_id", codigoCor);
@@ -307,6 +307,7 @@ const OperacaoFormulario = () => {
                     else if (response.status === 400) {
                         handleMensagemComErro('O veiculo já existe registrado!');
                         disabledSalvarVeiculo(false);
+                        
                     }
                     else {
 
@@ -315,6 +316,8 @@ const OperacaoFormulario = () => {
                     }
                 })
         } catch (error) {
+            setDisabled(false);
+            disabledSalvarVeiculo(false);
             if (error.message === "Failed to fetch") {
                 // get error message from body or default to response status                    
                 alert('A comunicação com os serviços de Marca de Veículos está com problemas!');
@@ -517,6 +520,7 @@ const OperacaoFormulario = () => {
 
         setTimeout(() => {
             setSalvando(false);
+            setDisabled(false);
         }, 3000);
     }
 
@@ -668,7 +672,7 @@ const OperacaoFormulario = () => {
                 <Box
                     component="div"
                     hidden={escondeDadosVeiculo}
-                    sx={{ bgcolor: 'ButtonHighlight' }}
+                    sx={{ bgcolor: 'aliceblue' }}
                 >
                     <Typography>
                         <b>Informações do Veículo</b>
@@ -935,7 +939,7 @@ const OperacaoFormulario = () => {
                         <Button variant="contained" color="primary" disabled={disabled} onClick={handleConfirmacaoSalvar}>
                             Continuar
                         </Button>
-                        <Button variant="contained" color={'error'} onClick={handleCloseDialog} autoFocus>Desistir</Button>
+                        <Button variant="contained" disable ={disabled} color={'error'} onClick={handleCloseDialog} autoFocus>Desistir</Button>
                     </DialogActions>
                 </Dialog>
             </Box>

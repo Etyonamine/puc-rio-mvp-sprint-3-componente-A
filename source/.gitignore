@@ -158,5 +158,3 @@ dist-ssr
 api_key_tempo.txt
 
 # variaveis de ambiente
-.env
-.env.production
