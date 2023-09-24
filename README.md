@@ -2,6 +2,11 @@
 Trabalho de MVP do sprint 3 - Arquitetura de software
 Esta é uma aplicação front-end que irá consumir as APIs abaixo:
 
+## Documentos importantes
+    Arquivo com o diagrama de componentes com o nome de "Diagrama-componentes-MVP-Sprint-03.pdf".
+    Encontra-se na raiz do repositório.
+
+
 ## API - Climática 
     Disponibiliza api para a previsão do tempo 
     site = https://openweathermap.org/
