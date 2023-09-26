@@ -160,6 +160,7 @@ const OperacaoSaida = () => {
     const handle_baixa_operacao = () => {
         try {             
             let data_entrada_param = AdicionarHorasNaData(dataSaida,3);  
+            let valor = valorHoraAvulso === 0 ?0:valorHoraAvulso.replace(',', '.');
 
             const data = new FormData();
             data.append("codigo", id);
@@ -168,7 +169,7 @@ const OperacaoSaida = () => {
             data.append("data_saida", FormataDataHora(data_entrada_param));
             data.append("total_permanencia", totalSegundos);
             data.append("valor_total", valorTotalPagar.replace(',', '.'));
-            data.append("valor_base_calculo", valorHoraAvulso.replace(',', '.'));
+            data.append("valor_base_calculo", valor);
 
             fetch(`${urlBaseOperacao}/operacao_saida_veiculo`,
                 {
