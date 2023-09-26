@@ -67,6 +67,7 @@ export default function ListaModelos() {
             border: 0,
         },
     }));
+
     const handleClose = () => {
         setOpen(false);
         handleCloseMensagemComErro();
@@ -88,6 +89,7 @@ export default function ListaModelos() {
         setMensagemComErro(false);
 
     };
+
     const excluirRegistro = () => {
         try 
         {
@@ -121,6 +123,7 @@ export default function ListaModelos() {
             handleMensagemComErro(error);
         }
     }
+
     const handleMensagemComSucesso = () => {
         setMensagemComSucesso(true);
         setTimeout(() => {
@@ -134,12 +137,14 @@ export default function ListaModelos() {
         setTextoComErro(erro);
         setMensagemComErro(true);
     }
+
     const AbrirModalExcluir = (data) => {
 
         setNome(data.nome);
         setCodigo(data.codigo);
         setOpen(true);
     }
+
     const getLista = () => {
         fetch(`${import.meta.env.VITE_URL_API_VEICULO}/modelos`)
             .then(response => response.json())
@@ -148,8 +153,9 @@ export default function ListaModelos() {
                 if (error.message === "Failed to fetch") {
                     // get error message from body or default to response status                    
                     alert('A comunicação com o serviço de consulta de Modelo de Veículos está com problemas!');
-
                 }
+                setListaModelos([]);
+                console.log(error);
             });
     }
     const consulta_veiculos = () => {
