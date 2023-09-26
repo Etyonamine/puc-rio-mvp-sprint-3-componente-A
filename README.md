@@ -26,11 +26,14 @@ Esta é uma aplicação front-end que irá consumir as APIs abaixo:
 1)Instalar o NODE versão 18.17.1
 
 
-### Execução
+
+### Execução - via fonte - vscode
 1)Iniciar os serviços do componente C e D, seja via projeto ou via imagem no docker
 
 2)Ambiente de desenvolvimento: 
     2.1)Acessar o diretório source 
+
+    2.2)Executar o comando npm install no terminal do vscode ou janela command no diretório source do repositorio
 
     2.2) Nos arquivos env e env.production deve ser informado depois da constante VITE_TEMPO_API_KEY após o sinal de igual a 
          APIKey do clima que será passado para o professor Daniel Marreco
@@ -41,10 +44,18 @@ Esta é uma aplicação front-end que irá consumir as APIs abaixo:
     2.3)Executar o comando = npm run dev
 
 
-## Construção da IMAGEM para o Docker
+## Construção da IMAGEM no Docker via Dockerfile
 1)Fazer o download do arquivo api_key_tempo.txt que contém a chave para ser aplicado nos arquivos ENV e ENV.Production (ambiente)
+
 2)Aplicar a chave APIKey disponibilizado no anexo na entrega do MVP.
+
 3)docker build -t componente-a .
 
-### executar o comando 
- docker run -p 5173:5173 componente-a 
+### executar via Docker o comando 
+ Pode ser executado de duas formas:
+
+ 1ª) via comando na janela de comando do windows 
+    "docker run -p 5173:5173 componente-a" 
+
+ 2ª) via janela docker depois de ter efetuado o comando de build no passo da construção da imagem no docker
+    Seguir os passos no documento com as instruções chamado execucao_via_docker.pdf que encontra-se no diretório raiz do repositório.
