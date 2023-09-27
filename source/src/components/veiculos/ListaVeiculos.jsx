@@ -37,8 +37,7 @@ export default function ListaVeiculos() {
     const [codigo, setCodigo] = useState(0);
 
     const [quantidadeOperacoes, setQuantidadeOperacoes] = useState(0);
-    const [consultadoOperacao, setConsultadoOperacao] = useState(false);
-
+     
     const [open, setOpen] = React.useState(false);
     const [mostrar_mensagem_sucesso, setMensagemComSucesso] = useState(false);
     const [mostrar_mensagem_com_erro, setMensagemComErro] = useState(false);
@@ -172,16 +171,11 @@ export default function ListaVeiculos() {
             .then(response => response.json())
             .then(responseData => {
                 setQuantidadeOperacoes(responseData.lista.length);
-                setConsultadoOperacao(true);
+                
             })
             .catch(error => {
                 console.error(error);
-                setConsultadoOperacao(true);
-                
-
-                if (error.message === "Failed to fetch") {
-                    setConsultadoOperacao(false);
-                }
+                  
             });
     }
 
