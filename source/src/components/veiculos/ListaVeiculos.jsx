@@ -99,17 +99,14 @@ export default function ListaVeiculos() {
 
     const excluirRegistro = () => {
         try {
-
-            if (consulta_operacoes() && consultadoOperacao) {
+            consulta_operacoes();
+            setTimeout(() => {
                 if (quantidadeOperacoes > 0) {
-                    handleMensagemComErro(`Existe [ ${quantidadeOperacoes} ] Operações registradas com este veículo!`);
-
+                    handleMensagemComErro('Existe operação com esta placa!');
                     return false;
                 }
                 const data = new FormData();
                 data.append("codigo", codigo);
-
-
 
                 fetch(`${import.meta.env.VITE_URL_API_VEICULO}/veiculo`,
                     {
@@ -122,9 +119,8 @@ export default function ListaVeiculos() {
                             handleMensagemComSucesso();
                         }
                     })
-            } else {
-                handleMensagemComErro(`Não é possível excluir! O serviço de Operações não está funcionando!`);
-            }
+
+            }, 5000);
 
         } catch (error) {
             if (error.message === "Failed to fetch") {
@@ -171,7 +167,8 @@ export default function ListaVeiculos() {
     }
 
     const consulta_operacoes = () => {
-        fetch(`${import.meta.env.VITE_URL_API_OPERACAO}/operacao_veiculo_id?codigo_veiculo=${codigo}`)
+        setQuantidadeOperacoes(0);
+        fetch(`${import.meta.env.VITE_URL_API_OPERACAO}/operacao_veiculo_id?placa_veiculo=${placa.toUpperCase().trim()}`)
             .then(response => response.json())
             .then(responseData => {
                 setQuantidadeOperacoes(responseData.lista.length);
@@ -179,12 +176,13 @@ export default function ListaVeiculos() {
             })
             .catch(error => {
                 console.error(error);
+                setConsultadoOperacao(true);
+                
+
                 if (error.message === "Failed to fetch") {
                     setConsultadoOperacao(false);
                 }
             });
-
-        return quantidadeOperacoes == null ? false : consultadoOperacao;
     }
 
     return (
@@ -311,7 +309,7 @@ export default function ListaVeiculos() {
                                 textAlign: 'left'
                             }}
                         >
-                            Tem certeza que deseja excluir a Marca <b> [ {placa} ]</b>?
+                            Tem certeza que deseja excluir o Veículo com a placa<b> [ {placa} ]</b>?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
