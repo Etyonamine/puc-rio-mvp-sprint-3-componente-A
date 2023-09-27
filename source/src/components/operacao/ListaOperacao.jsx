@@ -25,12 +25,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ExitIcon from '@mui/icons-material/ExitToAppOutlined';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import FormataData from '../Shared/FormatarData';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -155,9 +151,10 @@ export default function ListaOperacao() {
     }
 
     const getLista = () => {
-        let dataParam = FormataData(dataEntrada);
+        
+        
 
-        fetch(`${urlOperacaoBase}/operacao_data_entrada?data_entrada=${dataParam}`)
+        fetch(`${urlOperacaoBase}/operacoes`)
             .then(response => response.json())
             .then(responseData => {
                 setOperacoes(responseData.lista);
@@ -191,19 +188,7 @@ export default function ListaOperacao() {
                     &nbsp;
                     &nbsp;
                     &nbsp;
-                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
-                    <DatePicker
-                        id="dataEntrada"
-                        label="Data-Entrada"
-                        value={dayjs(dataEntrada)}
-                         onChange={(newValue) => setDataEntrada(newValue)}
-                        inputProps={{
-                            style: { fontSize: 14, textAlign: 'left', width: 100 },
-
-                        }}
-                    />
-                </LocalizationProvider>
-
+                
                 </Stack>
             </Box>
             {/* TABELA  ********************************************************************************** */}
