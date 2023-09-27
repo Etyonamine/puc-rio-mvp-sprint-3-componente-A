@@ -30,6 +30,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import ValidadorPlaca from '../../components/Shared/ValidadorPlaca';
 import FormataDataHora from '../../components/Shared/FormatarDataHora';
+import AdicionarHorasNaData from '../../components/Shared/AdicionarOuReduzirDataPorHora';
 
 /* ################## rotinas de mensagem para o usuario ############################ */
 const Alert = forwardRef(function Alert(props, ref) {
@@ -184,13 +185,14 @@ const OperacaoFormulario = () => {
 
     /** rotina que faz uso da chamada do serviço de inclusão */
     const RegistraOperacao = () => {
-        try {              
+        try {        
+            let data_entrada_param = AdicionarHorasNaData(dataEntrada,3);       
             Desabilitar_Botao_Salvar_Dialogo_e_Principal();
             const data = new FormData();
             data.append("placa_veiculo", placa.toUpperCase().trim());
             data.append("codigo_tipo_operacao", codigoTipo);
             data.append("observacao", observacao);
-            data.append("data_entrada", FormataDataHora(dataEntrada));
+            data.append("data_entrada", FormataDataHora(data_entrada_param));
 
 
             fetch(`${urlBaseOperacao}/operacao`,
