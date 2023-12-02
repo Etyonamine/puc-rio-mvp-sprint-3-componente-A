@@ -30,7 +30,8 @@ Esta é uma aplicação front-end que irá consumir as APIs abaixo:
 ### Execução - via fonte - vscode
 1)Iniciar os serviços do componente C e D, seja via projeto ou via imagem no docker
 
-2)Ambiente de desenvolvimento: 
+2)Ambiente de desenvolvimento:
+
     2.1)Acessar o diretório source 
 
     2.2)Executar o comando npm install no terminal do vscode ou janela command no diretório source do repositorio
